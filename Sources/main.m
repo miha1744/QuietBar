@@ -6,6 +6,7 @@
 #import "QBJumpController.h"
 #import "QBApplicationBackend.h"
 #import "QBApplicationController.h"
+#import "QBLocalization.h"
 
 static NSString *const QBEnabledKey = @"HideSystemItems";
 static NSString *const QBJumpEnabledKey = @"HideViaJumpLauncher";
@@ -69,6 +70,8 @@ static void PrintJSON(NSDictionary *value) {
 @property NSTextField *modeDescription;
 @property NSMenuItem *toggleMenuItem;
 @property NSStackView *legacyRow;
+@property NSPopUpButton *languageButton;
+@property(copy) NSString *previewLanguage;
 @property NSMutableArray *signalSources;
 @end
 
@@ -92,6 +95,9 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
     NSArray *arguments = NSProcessInfo.processInfo.arguments;
     self.preview = [arguments containsObject:@"--preview"];
+    NSUInteger languageIndex=[arguments indexOfObject:@"--language"];
+    if (self.preview && languageIndex!=NSNotFound && languageIndex+1<arguments.count)
+        self.previewLanguage=arguments[languageIndex+1];
     QBFilter *nativeFilter = [[QBFilter alloc] initWithClockTracking:YES];
     self.usesJumpBackend = [arguments containsObject:@"--legacy-jump"];
     self.usesApplicationBackend = !self.usesJumpBackend && (!nativeFilter.available || [arguments containsObject:@"--legacy-apps"]);
@@ -142,20 +148,20 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
     [self updateUI];
 }
 - (void)buildMenu {
-    self.statusItem = [NSStatusBar.systemStatusBar statusItemWithLength:NSSquareStatusItemLength];
+    if (!self.statusItem) self.statusItem = [NSStatusBar.systemStatusBar statusItemWithLength:NSSquareStatusItemLength];
     NSImage *image = [NSImage imageWithSystemSymbolName:@"menubar.rectangle" accessibilityDescription:@"QuietBar"];
     if (image) { image.template = YES; self.statusItem.button.image = image; }
     else self.statusItem.button.title = @"Q";
     NSMenu *menu = [[NSMenu alloc] initWithTitle:@"QuietBar"];
-    self.toggleMenuItem = [[NSMenuItem alloc] initWithTitle:@"Скрыть значки" action:@selector(toggle:) keyEquivalent:@""];
+    self.toggleMenuItem = [[NSMenuItem alloc] initWithTitle:QBLocalized(@"Скрыть значки") action:@selector(toggle:) keyEquivalent:@""];
     self.toggleMenuItem.target = self;
     [menu addItem:self.toggleMenuItem];
-    NSMenuItem *settings = [[NSMenuItem alloc] initWithTitle:@"Настройки QuietBar…" action:@selector(showSettings:) keyEquivalent:@","];
+    NSMenuItem *settings = [[NSMenuItem alloc] initWithTitle:QBLocalized(@"Настройки QuietBar…") action:@selector(showSettings:) keyEquivalent:@","];
     settings.target = self; [menu addItem:settings];
-    NSMenuItem *diagnostics = [[NSMenuItem alloc] initWithTitle:@"Скопировать диагностику" action:@selector(copyDiagnostics:) keyEquivalent:@""];
+    NSMenuItem *diagnostics = [[NSMenuItem alloc] initWithTitle:QBLocalized(@"Скопировать диагностику") action:@selector(copyDiagnostics:) keyEquivalent:@""];
     diagnostics.target = self; [menu addItem:diagnostics];
     [menu addItem:NSMenuItem.separatorItem];
-    NSMenuItem *quit = [[NSMenuItem alloc] initWithTitle:@"Завершить и вернуть значки" action:@selector(quit:) keyEquivalent:@"q"];
+    NSMenuItem *quit = [[NSMenuItem alloc] initWithTitle:QBLocalized(@"Завершить и вернуть значки") action:@selector(quit:) keyEquivalent:@"q"];
     quit.target = self; [menu addItem:quit];
     self.statusItem.menu = menu;
 }
@@ -165,32 +171,32 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
     self.window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0,0,600,MIN(hasLegacy ? 830 : 760,maxHeight))
         styleMask:NSWindowStyleMaskTitled|NSWindowStyleMaskClosable|NSWindowStyleMaskMiniaturizable
         backing:NSBackingStoreBuffered defer:NO];
-    self.window.title = self.preview ? @"QuietBar 1.3 — предпросмотр" : @"QuietBar";
+    self.window.title = self.preview ? [@"QuietBar — " stringByAppendingString:QBLocalized(@"Предпросмотр")] : @"QuietBar";
     self.window.releasedWhenClosed = NO;
     self.window.delegate = self;
     [self.window center];
     [self.window setFrameAutosaveName:@"QuietBarSettings"];
-    NSTextField *heading = Label(@"Уберите фиолетовый значок",24,NSColor.labelColor);
+    NSTextField *heading = Label(QBLocalized(@"Уберите фиолетовый значок"),24,NSColor.labelColor);
     heading.font = [NSFont systemFontOfSize:24 weight:NSFontWeightSemibold];
     NSTextField *intro = Label(self.usesApplicationBackend
-        ? @"Выберите приложение и запустите его через QuietBar. Экспериментальный способ для macOS 14 и новее; скрытие нужно проверить на вашем Mac."
+        ? QBLocalized(@"Выберите приложение и запустите его через QuietBar. Экспериментальный способ для macOS 14 и новее; скрытие нужно проверить на вашем Mac.")
         : self.usesJumpBackend
-        ? @"Экспериментальный способ для Jump Desktop на macOS 14 и новее. Подготовьте запуск, затем подключитесь заново и проверьте экран и управление."
-        : @"Системный фильтр скрывает фиолетовый значок и часть значков macOS при работающем захвате экрана.",13,NSColor.secondaryLabelColor);
-    self.statusTitle = Label(@"Значки видимы",20,NSColor.labelColor);
+        ? QBLocalized(@"Экспериментальный способ для Jump Desktop на macOS 14 и новее. Подготовьте запуск, затем подключитесь заново и проверьте экран и управление.")
+        : QBLocalized(@"Системный фильтр скрывает фиолетовый значок и часть значков macOS при работающем захвате экрана."),13,NSColor.secondaryLabelColor);
+    self.statusTitle = Label(QBLocalized(@"Значки видимы"),20,NSColor.labelColor);
     self.statusTitle.font = [NSFont systemFontOfSize:20 weight:NSFontWeightSemibold];
-    self.statusDescription = Label(@"Нажмите «Скрыть значки», чтобы включить скрытие.",13,NSColor.secondaryLabelColor);
+    self.statusDescription = Label(QBLocalized(@"Нажмите «Скрыть значки», чтобы включить скрытие."),13,NSColor.secondaryLabelColor);
     [self.statusDescription.heightAnchor constraintGreaterThanOrEqualToConstant:34].active = YES;
-    self.toggleButton = [NSButton buttonWithTitle:@"Скрыть значки" target:self action:@selector(toggle:)];
+    self.toggleButton = [NSButton buttonWithTitle:QBLocalized(@"Скрыть значки") target:self action:@selector(toggle:)];
     self.toggleButton.bezelStyle = NSBezelStyleRounded;
     self.toggleButton.controlSize = NSControlSizeLarge;
-    self.setupButton = [NSButton buttonWithTitle:@"Настроить разрешения…" target:self action:@selector(openSetup:)];
+    self.setupButton = [NSButton buttonWithTitle:QBLocalized(@"Настроить разрешения…") target:self action:@selector(openSetup:)];
     self.setupButton.bezelStyle = NSBezelStyleRounded;
     self.setupButton.hidden = YES;
-    self.jumpButton = [NSButton buttonWithTitle:@"Открыть Jump Desktop Connect…" target:self action:@selector(openJump:)];
+    self.jumpButton = [NSButton buttonWithTitle:QBLocalized(@"Открыть Jump Desktop Connect…") target:self action:@selector(openJump:)];
     self.jumpButton.bezelStyle = NSBezelStyleInline;
     self.jumpButton.hidden = !self.usesJumpBackend && !self.usesApplicationBackend;
-    if (self.usesApplicationBackend) self.jumpButton.title = @"Выбрать приложение…";
+    if (self.usesApplicationBackend) self.jumpButton.title = QBLocalized(@"Выбрать приложение…");
     self.jumpButton.enabled = !self.preview;
     NSStackView *cardStack = VStack(@[self.statusTitle,self.statusDescription,self.toggleButton,self.setupButton,self.jumpButton],10);
     NSBox *card = [[NSBox alloc] init];
@@ -206,34 +212,47 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
         [cardStack.topAnchor constraintEqualToAnchor:card.contentView.topAnchor constant:18],
         [cardStack.bottomAnchor constraintEqualToAnchor:card.contentView.bottomAnchor constant:-18]
     ]];
-    self.loginButton = [NSButton checkboxWithTitle:@"Запускать QuietBar при входе в систему" target:self action:@selector(toggleLogin:)];
+    self.loginButton = [NSButton checkboxWithTitle:QBLocalized(@"Запускать QuietBar при входе в систему") target:self action:@selector(toggleLogin:)];
     self.loginDescription = Label(@"",12,NSColor.secondaryLabelColor);
-    self.loginSettingsButton = [NSButton buttonWithTitle:@"Открыть настройки входа…" target:self action:@selector(openLoginSettings:)];
+    self.loginSettingsButton = [NSButton buttonWithTitle:QBLocalized(@"Открыть настройки входа…") target:self action:@selector(openLoginSettings:)];
     self.loginSettingsButton.bezelStyle = NSBezelStyleInline;
     self.loginSettingsButton.hidden = YES;
     NSStackView *login = VStack(@[self.loginButton,self.loginDescription,self.loginSettingsButton],6);
     NSTextField *details = Label(self.usesApplicationBackend
-        ? @"Закройте выбранное приложение перед запуском. При первом запуске разрешите Terminal запись экрана в настройках macOS. Разрешения самого приложения также должны быть настроены.\n\nОтдельные фоновые службы и уже работающие экземпляры могут использовать обычный путь захвата. Выключение QuietBar просит выбранное приложение завершиться; сохраните открытые документы."
+        ? QBLocalized(@"Закройте выбранное приложение перед запуском. При первом запуске разрешите Terminal запись экрана в настройках macOS. Разрешения самого приложения также должны быть настроены.\n\nОтдельные фоновые службы и уже работающие экземпляры могут использовать обычный путь захвата. Выключение QuietBar просит выбранное приложение завершиться; сохраните открытые документы.")
         : self.usesJumpBackend
-        ? @"Первый запуск: разрешите Terminal запись экрана и универсальный доступ в настройках macOS. В Jump Desktop Connect включите General → Start Jump Desktop when my computer starts.\n\nКнопка «Подготовить Jump» перезапускает его пользовательский агент. Текущее соединение может прерваться. Выключение QuietBar возвращает обычный запуск."
-        : @"Останутся часы, Wi-Fi, звук, Bluetooth, батарея и Пункт управления. У часов значки временно возвращаются, чтобы открывался Центр уведомлений. Выход из QuietBar возвращает значки.",12,NSColor.secondaryLabelColor);
+        ? QBLocalized(@"Первый запуск: разрешите Terminal запись экрана и универсальный доступ в настройках macOS. В Jump Desktop Connect включите General → Start Jump Desktop when my computer starts.\n\nКнопка «Подготовить Jump» перезапускает его пользовательский агент. Текущее соединение может прерваться. Выключение QuietBar возвращает обычный запуск.")
+        : QBLocalized(@"Останутся часы, Wi-Fi, звук, Bluetooth, батарея и Пункт управления. У часов значки временно возвращаются, чтобы открывался Центр уведомлений. Выход из QuietBar возвращает значки."),12,NSColor.secondaryLabelColor);
     self.modeDescription = Label(self.usesApplicationBackend
-        ? @"macOS 14+ · Intel и Apple Silicon. Запуск через QuietBar не гарантирует скрытие для каждого приложения. SIP не изменяется."
+        ? QBLocalized(@"macOS 14+ · Intel и Apple Silicon. Запуск через QuietBar не гарантирует скрытие для каждого приложения. SIP не изменяется.")
         : self.usesJumpBackend
-        ? @"macOS 14 и новее · Intel и Apple Silicon. Экспериментальный режим: проверьте подключение и скрытие значка на этом Mac."
-        : @"Системный способ проверен на macOS 27.0.1 · Apple Silicon. Доступность API определяется при запуске.",11,NSColor.tertiaryLabelColor);
+        ? QBLocalized(@"macOS 14 и новее · Intel и Apple Silicon. Экспериментальный режим: проверьте подключение и скрытие значка на этом Mac.")
+        : QBLocalized(@"Системный способ проверен на macOS 27.0.1 · Apple Silicon. Доступность API определяется при запуске."),11,NSColor.tertiaryLabelColor);
     NSView *divider = [[NSBox alloc] init]; [(NSBox *)divider setBoxType:NSBoxSeparator];
-    NSButton *quit = [NSButton buttonWithTitle:@"Завершить и вернуть значки" target:self action:@selector(quit:)];
+    NSButton *quit = [NSButton buttonWithTitle:QBLocalized(@"Завершить и вернуть значки") target:self action:@selector(quit:)];
     quit.bezelStyle = NSBezelStyleRounded;
-    NSButton *diagnostics = [NSButton buttonWithTitle:@"Скопировать диагностику" target:self action:@selector(copyDiagnostics:)];
+    NSButton *diagnostics = [NSButton buttonWithTitle:QBLocalized(@"Скопировать диагностику") target:self action:@selector(copyDiagnostics:)];
     diagnostics.bezelStyle = NSBezelStyleInline;
-    NSTextField *legacyText = Label(@"Здесь установлена предыдущая фоновая версия. Отключите её, чтобы QuietBar мог возвращать значки.",12,NSColor.secondaryLabelColor);
-    NSButton *legacyButton = [NSButton buttonWithTitle:@"Отключить предыдущую версию" target:self action:@selector(stopLegacy:)];
+    NSTextField *legacyText = Label(QBLocalized(@"Здесь установлена предыдущая фоновая версия. Отключите её, чтобы QuietBar мог возвращать значки."),12,NSColor.secondaryLabelColor);
+    NSButton *legacyButton = [NSButton buttonWithTitle:QBLocalized(@"Отключить предыдущую версию") target:self action:@selector(stopLegacy:)];
     legacyButton.bezelStyle = NSBezelStyleRounded;
     legacyButton.enabled = !self.preview;
     self.legacyRow = VStack(@[legacyText,legacyButton],6);
     self.legacyRow.hidden = !hasLegacy;
-    NSStackView *root = VStack(@[heading,intro,card,login,details,self.legacyRow,divider,self.modeDescription,diagnostics,quit],16);
+    NSTextField *languageLabel = Label(QBLocalized(@"Язык интерфейса"),12,NSColor.secondaryLabelColor);
+    self.languageButton = [[NSPopUpButton alloc] initWithFrame:NSZeroRect pullsDown:NO];
+    self.languageButton.target = self; self.languageButton.action = @selector(changeLanguage:);
+    NSArray *languageCodes = [@[@"system"] arrayByAddingObjectsFromArray:QBSupportedLanguages()];
+    NSDictionary *languageNames = @{@"en":@"English",@"ru":@"Русский",@"de":@"Deutsch",@"es":@"Español",@"fr":@"Français",@"zh-Hans":@"简体中文"};
+    for (NSString *code in languageCodes) {
+        [self.languageButton addItemWithTitle:[code isEqualToString:@"system"] ? QBLocalized(@"Как в системе") : languageNames[code]];
+        self.languageButton.lastItem.representedObject = code;
+    }
+    NSString *languageChoice=self.preview ? (self.previewLanguage ?: QBPreferredLanguage()) : QBPreferredLanguage();
+    NSUInteger selectedLanguage=[languageCodes indexOfObject:languageChoice];
+    [self.languageButton selectItemAtIndex:selectedLanguage==NSNotFound ? 0 : selectedLanguage];
+    NSStackView *languageRow = VStack(@[languageLabel,self.languageButton],6);
+    NSStackView *root = VStack(@[heading,intro,card,login,languageRow,details,self.legacyRow,divider,self.modeDescription,diagnostics,quit],16);
     root.translatesAutoresizingMaskIntoConstraints = NO;
     NSScrollView *scroll = [[NSScrollView alloc] init];
     scroll.translatesAutoresizingMaskIntoConstraints = NO;
@@ -261,6 +280,12 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
         [self.modeDescription.widthAnchor constraintEqualToAnchor:root.widthAnchor],
         [legacyText.widthAnchor constraintEqualToAnchor:root.widthAnchor],
         [self.statusDescription.widthAnchor constraintEqualToAnchor:cardStack.widthAnchor],
+        [self.statusTitle.widthAnchor constraintEqualToAnchor:cardStack.widthAnchor],
+        [heading.widthAnchor constraintEqualToAnchor:root.widthAnchor],
+        [self.toggleButton.widthAnchor constraintLessThanOrEqualToAnchor:cardStack.widthAnchor],
+        [self.setupButton.widthAnchor constraintLessThanOrEqualToAnchor:cardStack.widthAnchor],
+        [self.jumpButton.widthAnchor constraintLessThanOrEqualToAnchor:cardStack.widthAnchor],
+        [self.loginButton.widthAnchor constraintLessThanOrEqualToAnchor:root.widthAnchor],
         [divider.widthAnchor constraintEqualToAnchor:root.widthAnchor],
         [self.loginDescription.widthAnchor constraintEqualToAnchor:root.widthAnchor]
     ]];
@@ -270,64 +295,65 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
     NSString *title, *body;
     switch (self.filter.state) {
         case QBFilterStateOff:
-            title=self.usesJumpBackend ? @"Обычный запуск Jump" : @"Значки видимы";
-            body=self.usesJumpBackend ? @"Нажмите «Подготовить Jump». Приложение проверит разрешения и перезапустит пользовательский агент Jump." : @"Нажмите «Скрыть значки», чтобы включить скрытие."; break;
+            title=self.usesJumpBackend ? QBLocalized(@"Обычный запуск Jump") : QBLocalized(@"Значки видимы");
+            body=self.usesJumpBackend ? QBLocalized(@"Нажмите «Подготовить Jump». Приложение проверит разрешения и перезапустит пользовательский агент Jump.") : QBLocalized(@"Нажмите «Скрыть значки», чтобы включить скрытие."); break;
         case QBFilterStateStarting:
-            title=self.usesJumpBackend ? @"Готовим запуск Jump…" : @"Включаем скрытие…";
-            body=self.usesJumpBackend ? (self.filter.errorMessage.length ? self.filter.errorMessage : @"Проверяем разрешения и ждём готовности агента.") : @"Ждём ответ macOS."; break;
+            title=self.usesJumpBackend ? QBLocalized(@"Готовим запуск Jump…") : QBLocalized(@"Включаем скрытие…");
+            body=self.usesJumpBackend ? (self.filter.errorMessage.length ? self.filter.errorMessage : QBLocalized(@"Проверяем разрешения и ждём готовности агента.")) : QBLocalized(@"Ждём ответ macOS."); break;
         case QBFilterStateActive:
-            title=@"Скрытие включено"; body=@"macOS приняла настройку. Проверьте, исчезли ли нужные значки."; break;
+            title=QBLocalized(@"Скрытие включено"); body=QBLocalized(@"macOS приняла настройку. Проверьте, исчезли ли нужные значки."); break;
         case QBFilterStateAtClock:
-            title=@"Значки временно видимы"; body=@"Курсор у часов. Уведите его, и QuietBar снова скроет значки."; break;
+            title=QBLocalized(@"Значки временно видимы"); body=QBLocalized(@"Курсор у часов. Уведите его, и QuietBar снова скроет значки."); break;
         case QBFilterStateUnsupported:
-            title=self.usesJumpBackend ? @"Нужен Jump Desktop Connect" : @"Скрытие недоступно";
-            body=self.filter.errorMessage.length ? self.filter.errorMessage : @"В этой macOS недоступен нужный системный API."; break;
+            title=self.usesJumpBackend ? QBLocalized(@"Нужен Jump Desktop Connect") : QBLocalized(@"Скрытие недоступно");
+            body=self.filter.errorMessage.length ? self.filter.errorMessage : QBLocalized(@"В этой macOS недоступен нужный системный API."); break;
         case QBFilterStateError:
-            title=self.usesJumpBackend ? @"Запуск Jump не подготовлен" : @"Не удалось скрыть значки"; body=self.filter.errorMessage; break;
+            title=self.usesJumpBackend ? QBLocalized(@"Запуск Jump не подготовлен") : QBLocalized(@"Не удалось скрыть значки"); body=self.filter.errorMessage; break;
         case QBFilterStateNeedsSetup:
-            title=@"Нужна настройка"; body=self.filter.errorMessage; break;
+            title=QBLocalized(@"Нужна настройка"); body=self.filter.errorMessage; break;
         case QBFilterStatePrepared:
-            title=@"Запуск Jump подготовлен";
-            body=@"Подключитесь к этому Mac через Jump заново. Проверьте передачу экрана, мышь и клавиатуру, а затем — отсутствие фиолетового значка. Готовность агента сама по себе не подтверждает скрытие."; break;
+            title=QBLocalized(@"Запуск Jump подготовлен");
+            body=QBLocalized(@"Подключитесь к этому Mac через Jump заново. Проверьте передачу экрана, мышь и клавиатуру, а затем — отсутствие фиолетового значка. Готовность агента сама по себе не подтверждает скрытие."); break;
         case QBFilterStateStopping:
-            title=@"Возвращаем обычный запуск…";
-            body=self.filter.errorMessage.length ? self.filter.errorMessage : @"Ждём завершения обёртки и восстановления агента Jump."; break;
+            title=QBLocalized(@"Возвращаем обычный запуск…");
+            body=self.filter.errorMessage.length ? self.filter.errorMessage : QBLocalized(@"Ждём завершения обёртки и восстановления агента Jump."); break;
     }
     if (self.usesApplicationBackend) {
         QBApplicationBackend *backend=(QBApplicationBackend *)self.filter;
         switch (self.filter.state) {
             case QBFilterStateOff:
-                title=@"Готово к запуску";
-                body=backend.selectedApplicationURL ? [NSString stringWithFormat:@"Выбрано: %@. Закройте приложение и нажмите «Запустить через QuietBar».",backend.selectedApplicationName] : @"Выберите приложение, которое захватывает или передаёт экран."; break;
-            case QBFilterStateStarting: title=@"Запускаем приложение…"; body=self.filter.errorMessage.length ? self.filter.errorMessage : @"Проверяем приложение и разрешения macOS."; break;
-            case QBFilterStatePrepared: title=@"Приложение запущено"; body=@"Включите захват или подключитесь к этому Mac. Проверьте передачу экрана, управление и отсутствие фиолетового индикатора. Сам запуск этого не подтверждает."; break;
-            case QBFilterStateStopping: title=@"Завершаем запуск…"; body=self.filter.errorMessage.length ? self.filter.errorMessage : @"Ждём обычного завершения приложения. Сохраните открытые документы."; break;
-            case QBFilterStateNeedsSetup: title=@"Нужно ваше действие"; body=self.filter.errorMessage; break;
-            case QBFilterStateUnsupported: title=@"Запуск недоступен"; body=self.filter.errorMessage; break;
-            case QBFilterStateError: title=@"Не удалось запустить приложение"; body=self.filter.errorMessage; break;
+                title=QBLocalized(@"Готово к запуску");
+                body=backend.selectedApplicationURL ? [NSString stringWithFormat:QBLocalized(@"Выбрано: %@. Закройте приложение и нажмите «Запустить через QuietBar»."),backend.selectedApplicationName] : QBLocalized(@"Выберите приложение, которое захватывает или передаёт экран."); break;
+            case QBFilterStateStarting: title=QBLocalized(@"Запускаем приложение…"); body=self.filter.errorMessage.length ? self.filter.errorMessage : QBLocalized(@"Проверяем приложение и разрешения macOS."); break;
+            case QBFilterStatePrepared: title=QBLocalized(@"Приложение запущено"); body=QBLocalized(@"Включите захват или подключитесь к этому Mac. Проверьте передачу экрана, управление и отсутствие фиолетового индикатора. Сам запуск этого не подтверждает."); break;
+            case QBFilterStateStopping: title=QBLocalized(@"Завершаем запуск…"); body=self.filter.errorMessage.length ? self.filter.errorMessage : QBLocalized(@"Ждём обычного завершения приложения. Сохраните открытые документы."); break;
+            case QBFilterStateNeedsSetup: title=QBLocalized(@"Нужно ваше действие"); body=self.filter.errorMessage; break;
+            case QBFilterStateUnsupported: title=QBLocalized(@"Запуск недоступен"); body=self.filter.errorMessage; break;
+            case QBFilterStateError: title=QBLocalized(@"Не удалось запустить приложение"); body=self.filter.errorMessage; break;
             default: break;
         }
     }
-    if (self.preview) body = [@"Предпросмотр интерфейса.\n\n" stringByAppendingString:body ?: @""];
+    body = QBLocalized(body ?: @"");
+    if (self.preview) body = [QBLocalized(@"Предпросмотр интерфейса.\n\n") stringByAppendingString:body];
     self.statusTitle.stringValue = title;
-    self.statusDescription.stringValue = body;
-    NSString *button = self.usesJumpBackend ? (self.filter.enabled ? @"Вернуть обычный запуск" : @"Подготовить Jump")
-                                         : (self.filter.enabled ? @"Показать значки" : @"Скрыть значки");
-    if (self.usesApplicationBackend) button=self.filter.enabled ? @"Завершить запуск"
-        : [(QBApplicationBackend *)self.filter selectedApplicationURL] ? @"Запустить через QuietBar" : @"Выбрать приложение…";
+    self.statusDescription.stringValue = QBLocalized(body ?: @"");
+    NSString *button = self.usesJumpBackend ? (self.filter.enabled ? QBLocalized(@"Вернуть обычный запуск") : QBLocalized(@"Подготовить Jump"))
+                                         : (self.filter.enabled ? QBLocalized(@"Показать значки") : QBLocalized(@"Скрыть значки"));
+    if (self.usesApplicationBackend) button=self.filter.enabled ? QBLocalized(@"Завершить запуск")
+        : [(QBApplicationBackend *)self.filter selectedApplicationURL] ? QBLocalized(@"Запустить через QuietBar") : QBLocalized(@"Выбрать приложение…");
     if (!self.filter.enabled && [[self launcherDiagnostics][@"cleanupPending"] boolValue])
-        button=self.usesApplicationBackend ? @"Проверить завершение" : @"Восстановить запуск Jump";
+        button=self.usesApplicationBackend ? QBLocalized(@"Проверить завершение") : QBLocalized(@"Восстановить запуск Jump");
     self.toggleButton.title = button; self.toggleMenuItem.title = button;
     BOOL busy = self.filter.state==QBFilterStateStopping;
     self.toggleButton.enabled = self.filter.available && !self.preview && !busy;
     self.toggleMenuItem.enabled = self.toggleButton.enabled;
     self.setupButton.hidden = (!self.usesJumpBackend && !self.usesApplicationBackend) || self.filter.state!=QBFilterStateNeedsSetup;
     self.setupButton.enabled = !self.preview;
-    self.setupButton.title = self.usesApplicationBackend ? @"Продолжить настройку…" : @"Настроить разрешения…";
+    self.setupButton.title = self.usesApplicationBackend ? QBLocalized(@"Продолжить настройку…") : QBLocalized(@"Настроить разрешения…");
     self.jumpButton.enabled = !self.preview && !self.filter.enabled && ![[self launcherDiagnostics][@"cleanupPending"] boolValue];
     if (self.usesApplicationBackend) {
         self.jumpButton.hidden=![(QBApplicationBackend *)self.filter selectedApplicationURL];
-        self.jumpButton.title=@"Выбрать другое приложение…";
+        self.jumpButton.title=QBLocalized(@"Выбрать другое приложение…");
     }
     self.loginButton.enabled = !self.preview;
     if (!self.preview && !self.restoringDefaults && self.usesJumpBackend) {
@@ -335,7 +361,19 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
         else if (self.filter.state==QBFilterStateOff || self.filter.state==QBFilterStateNeedsSetup || self.filter.state==QBFilterStateError)
             [NSUserDefaults.standardUserDefaults setBool:NO forKey:QBJumpEnabledKey];
     }
-    self.statusItem.button.toolTip = [@"QuietBar — " stringByAppendingString:title.lowercaseString];
+    self.statusItem.button.toolTip = [@"QuietBar — " stringByAppendingString:title];
+}
+- (void)changeLanguage:(NSPopUpButton *)sender {
+    NSString *code = sender.selectedItem.representedObject;
+    if (self.preview) { self.previewLanguage=code; QBSetLanguageOverride(code); }
+    else { QBSetLanguageOverride(nil); QBSetPreferredLanguage(code); }
+    // Rebuild presentation only: the active backend and capture lifecycle stay intact.
+    BOOL visible=self.window.visible;
+    NSPoint topLeft=NSMakePoint(NSMinX(self.window.frame),NSMaxY(self.window.frame));
+    [self.window close]; [self buildMenu]; [self buildWindow];
+    [self.window setFrameTopLeftPoint:topLeft];
+    [self updateUI]; [self updateLoginUI];
+    if (visible) [self showSettings:nil];
 }
 - (NSDictionary *)launcherDiagnostics {
     if (self.usesJumpBackend) return [(QBJumpBackend *)self.filter diagnostics];
@@ -402,10 +440,10 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
     self.loginButton.state = (status==SMAppServiceStatusEnabled || status==SMAppServiceStatusRequiresApproval) ? NSControlStateValueOn : NSControlStateValueOff;
     self.loginSettingsButton.hidden = status!=SMAppServiceStatusRequiresApproval;
     switch (status) {
-        case SMAppServiceStatusEnabled: self.loginDescription.stringValue=@"Автозапуск разрешён в настройках macOS."; break;
-        case SMAppServiceStatusRequiresApproval: self.loginDescription.stringValue=@"Разрешите QuietBar в настройках входа macOS."; break;
-        case SMAppServiceStatusNotRegistered: self.loginDescription.stringValue=@"Автозапуск выключен."; break;
-        case SMAppServiceStatusNotFound: self.loginDescription.stringValue=@"Автозапуск ещё не настроен."; break;
+        case SMAppServiceStatusEnabled: self.loginDescription.stringValue=QBLocalized(@"Автозапуск разрешён в настройках macOS."); break;
+        case SMAppServiceStatusRequiresApproval: self.loginDescription.stringValue=QBLocalized(@"Разрешите QuietBar в настройках входа macOS."); break;
+        case SMAppServiceStatusNotRegistered: self.loginDescription.stringValue=QBLocalized(@"Автозапуск выключен."); break;
+        case SMAppServiceStatusNotFound: self.loginDescription.stringValue=QBLocalized(@"Автозапуск ещё не настроен."); break;
     }
 }
 - (void)toggleLogin:(id)sender {
@@ -415,8 +453,8 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
                            : [SMAppService.mainAppService unregisterAndReturnError:&error];
     [self updateLoginUI];
     if (!ok) self.loginDescription.stringValue = wantsEnabled
-        ? @"macOS не включила автозапуск. Перенесите приложение в «Программы» и попробуйте снова."
-        : @"macOS не отключила автозапуск. Откройте настройки входа и отключите QuietBar.";
+        ? QBLocalized(@"macOS не включила автозапуск. Перенесите приложение в «Программы» и попробуйте снова.")
+        : QBLocalized(@"macOS не отключила автозапуск. Откройте настройки входа и отключите QuietBar.");
     if (!ok) self.loginSettingsButton.hidden = NO;
 }
 - (void)openLoginSettings:(id)sender { [SMAppService openSystemSettingsLoginItems]; }
@@ -448,16 +486,16 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
     NSString *target = [domain stringByAppendingString:@"/local.hide-screen-sharing-indicator"];
     if (![self runLaunchctl:@[@"disable",target]]) {
         NSAlert *alert = [[NSAlert alloc] init];
-        alert.messageText=@"Не удалось отключить предыдущую версию";
-        alert.informativeText=@"Запустите сохранённую команду «Вернуть системные значки» и попробуйте снова.";
-        [alert addButtonWithTitle:@"Закрыть"]; [alert beginSheetModalForWindow:self.window completionHandler:nil]; return;
+        alert.messageText=QBLocalized(@"Не удалось отключить предыдущую версию");
+        alert.informativeText=QBLocalized(@"Запустите сохранённую команду «Вернуть системные значки» и попробуйте снова.");
+        [alert addButtonWithTitle:QBLocalized(@"Закрыть")]; [alert beginSheetModalForWindow:self.window completionHandler:nil]; return;
     }
     BOOL stopped=[self runLaunchctl:@[@"bootout",target]];
     if (!stopped && ![self legacyServiceConfirmedMissing:target]) {
         NSAlert *alert=[[NSAlert alloc] init];
-        alert.messageText=@"Остановка предыдущей версии не подтверждена";
-        alert.informativeText=@"Строка управления сохранена. Попробуйте снова или запустите команду «Вернуть системные значки».";
-        [alert addButtonWithTitle:@"Закрыть"];
+        alert.messageText=QBLocalized(@"Остановка предыдущей версии не подтверждена");
+        alert.informativeText=QBLocalized(@"Строка управления сохранена. Попробуйте снова или запустите команду «Вернуть системные значки».");
+        [alert addButtonWithTitle:QBLocalized(@"Закрыть")];
         [alert beginSheetModalForWindow:self.window completionHandler:nil];
         return;
     }
@@ -493,9 +531,9 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
             [timer invalidate]; app.terminationPending = NO; [NSApp replyToApplicationShouldTerminate:NO];
             [app showSettings:nil];
             NSAlert *alert = [[NSAlert alloc] init];
-            alert.messageText=app.usesApplicationBackend ? @"Завершение приложения ещё не подтверждено" : @"Восстановление Jump ещё не подтверждено";
-            alert.informativeText=@"QuietBar остаётся открытым. Проверьте состояние в окне приложения и повторите выключение.";
-            [alert addButtonWithTitle:@"Понятно"]; [alert beginSheetModalForWindow:app.window completionHandler:nil];
+            alert.messageText=app.usesApplicationBackend ? QBLocalized(@"Завершение приложения ещё не подтверждено") : QBLocalized(@"Восстановление Jump ещё не подтверждено");
+            alert.informativeText=QBLocalized(@"QuietBar остаётся открытым. Проверьте состояние в окне приложения и повторите выключение.");
+            [alert addButtonWithTitle:QBLocalized(@"Понятно")]; [alert beginSheetModalForWindow:app.window completionHandler:nil];
         }
     }];
     return NSTerminateLater;
@@ -566,6 +604,15 @@ static int RunApplicationIntegrationTest(NSArray<NSString *> *arguments) {
 int main(void) {
     @autoreleasepool {
         NSArray *arguments = NSProcessInfo.processInfo.arguments;
+        NSUInteger languageIndex=[arguments indexOfObject:@"--language"];
+        if (languageIndex!=NSNotFound) {
+            if (languageIndex+1>=arguments.count) return 64;
+            QBSetLanguageOverride(arguments[languageIndex+1]);
+        }
+        if ([arguments containsObject:@"--test-localization"]) {
+            NSDictionary *result=QBLocalizationSelfTest(); PrintJSON(result);
+            return [result[@"ok"] boolValue] ? 0 : 1;
+        }
         if (arguments.count>1 && [arguments[1] isEqualToString:@"--jump-controller"]) {
             if (arguments.count!=5 || [arguments[3] intValue]<=1) return 64;
             return QBRunJumpController(arguments[2],(pid_t)[arguments[3] intValue],arguments[4]);

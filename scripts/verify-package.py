@@ -105,6 +105,11 @@ def verify_app(app, metadata, hardened, label):
     run(f"{label}: signature", [
         "/usr/bin/codesign", "--verify", "--strict", "--all-architectures", "--verbose=2", app,
     ])
+    require(metadata.get("CFBundleLocalizations") == ["en", "ru", "de", "es", "fr", "zh-Hans"],
+            f"{label}: supported language metadata is incomplete")
+    for language in metadata["CFBundleLocalizations"]:
+        strings = app / "Contents/Resources" / f"{language}.lproj/Localizable.strings"
+        run(f"{label}: {language} strings", ["/usr/bin/plutil", "-lint", strings])
     require(metadata.get("CFBundleIconFile") == "AppIcon", f"{label}: app icon is not declared")
     icon = app / "Contents/Resources/AppIcon.icns"
     require(icon.is_file() and icon.read_bytes()[:4] == b"icns", f"{label}: valid ICNS header missing")
@@ -175,12 +180,17 @@ def verify_dmg(path, temporary, app_files, metadata, hardened):
 
 
 def cli_checks(binary, metadata):
-    for flag in ("--test-legacy-helpers", "--test-application-helpers", "--test-unsupported", "--self-test"):
+    for flag in ("--test-localization", "--test-legacy-helpers", "--test-application-helpers", "--test-unsupported", "--self-test"):
         stdout, _ = run(flag, [binary, flag], timeout=30)
         value = json.loads(stdout)
         require(isinstance(value, dict), f"{flag}: expected JSON object")
         REPORT["cliTests"][flag] = value
-        if flag == "--test-legacy-helpers":
+        if flag == "--test-localization":
+            require(json_flag(value.get("ok"), True) and value.get("errors") == [], "Localization resource checks failed")
+            require(value.get("languages") == ["en", "ru", "de", "es", "fr", "zh-Hans"]
+                    and value.get("keyCount", 0) >= 220, "Localization coverage is incomplete")
+            require(set(value.get("resources", {})) == set(value["languages"]), "Localization resources missing")
+        elif flag == "--test-legacy-helpers":
             controller, backend = value.get("controller", {}), value.get("backend", {})
             require(json_flag(value.get("passed"), True) and json_flag(controller.get("passed"), True)
                     and json_flag(backend.get("passed"), True), "Legacy helper fixtures failed")
@@ -248,6 +258,9 @@ def main():
         verify_zip(source_zip, "QuietBar-source", ["QuietBar-source/build.sh", "QuietBar-source/Sources/main.m",
             "QuietBar-source/Sources/QBApplicationBackend.h", "QuietBar-source/Sources/QBApplicationBackend.m",
             "QuietBar-source/Sources/QBApplicationController.h", "QuietBar-source/Sources/QBApplicationController.m",
+            "QuietBar-source/Sources/QBLocalization.h", "QuietBar-source/Sources/QBLocalization.m",
+            *[f"QuietBar-source/Resources/{language}.lproj/Localizable.strings"
+              for language in metadata["CFBundleLocalizations"]],
             "QuietBar-source/ci/application_attribution.py", "QuietBar-source/.github/workflows/application-attribution.yml"])
         with tempfile.TemporaryDirectory(prefix="quietbar-verify-", dir=build) as directory:
             temporary = Path(directory)

@@ -19,6 +19,7 @@ It invokes these read-only CLI modes on the output app:
 
 | Command | Evidence |
 | --- | --- |
+| `--test-localization` | All six real resource catalogs, equal key sets, nonempty translations, format placeholders, regional resolution and English fallback; no preference writes. |
 | `--test-legacy-helpers` | Controller recovery/path/identity fixtures (currently 20) and backend validation fixtures. Reports zero service/preference mutations and no agent launch. |
 | `--test-application-helpers` | Generic controller and backend validation fixtures; no selected application launch or permission request. |
 | `--test-unsupported` | Simulates a missing private API and checks that activation is blocked. |
@@ -65,3 +66,11 @@ iconutil -c icns build/QuietBar.iconset -o Resources/AppIcon.icns
 ```
 
 The checked-in assets are already rendered; app builds do not need Node or sharp. `social-preview.png` is the 1280×640 repository link preview artwork; uploading it in GitHub repository settings is a separate operation.
+
+## Interface translations
+
+Source keys and all six catalogs live in `Resources/{en,ru,de,es,fr,zh-Hans}.lproj/Localizable.strings`. `QBLocalization` resolves the system language with English fallback. The window selector saves only `QuietBarLanguage`; updating the language rebuilds presentation while retaining the same backend. Machine-readable diagnostic keys and controller protocol phases stay unchanged. Native macOS dialogs retain their own system localization.
+
+For a read-only interface preview, run the built executable with `--preview --legacy-apps --language de` (or another supported code). `--language` is a process-only override; choosing another language in preview also avoids saving a language preference. Preview disables app launch, permission setup and login changes. `--test-localization` runs before NSApplication and does not enable capture.
+
+The animated README demo and its provenance are documented in [demo.md](assets/demo.md). Rebuilding it uses existing test images; it does not capture a new screen.

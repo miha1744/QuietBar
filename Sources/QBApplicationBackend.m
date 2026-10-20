@@ -1,4 +1,5 @@
 #import "QBApplicationBackend.h"
+#import "QBLocalization.h"
 #import "QBApplicationController.h"
 #import <libproc.h>
 #import <sys/stat.h>
@@ -263,9 +264,9 @@ static NSURL *QBApplicationURL(NSURL *url, NSString **error) {
 - (void)chooseApplicationForWindow:(NSWindow *)window {
     if (!self.recoveryEnabled || self.cleanupPending || self.recovering) return;
     NSOpenPanel *panel = [NSOpenPanel openPanel];
-    panel.title = @"Выберите приложение для экспериментального запуска";
-    panel.prompt = @"Выбрать";
-    panel.message = @"Выберите одно приложение .app. Перед запуском его потребуется закрыть вручную.";
+    panel.title = QBLocalized(@"Выберите приложение для экспериментального запуска");
+    panel.prompt = QBLocalized(@"Выбрать");
+    panel.message = QBLocalized(@"Выберите одно приложение .app. Перед запуском его потребуется закрыть вручную.");
     panel.canChooseFiles = YES; panel.canChooseDirectories = YES;
     panel.treatsFilePackagesAsDirectories = NO; panel.allowsMultipleSelection = NO;
     __weak QBApplicationBackend *weakSelf = self;

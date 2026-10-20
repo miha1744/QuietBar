@@ -1,5 +1,14 @@
 # Changes
 
+## 1.4.0 Preview 1 — 2026-10-20
+
+- Localize application buttons, menus, setup guidance and status messages in English, Russian, German, French, Spanish and Simplified Chinese.
+- Follow the system language with English fallback; add an in-window selector that updates presentation without restarting the active backend.
+- Include and validate all six translation catalogs in the app, ZIP, DMG and source archive.
+- Add an animated demonstration assembled from existing native capture-test snapshots, with source metrics and visible fixture/SIP limitations.
+
+App metadata is 1.4.0 (6). Capture behavior and the 1.3.0 evidence are unchanged. This remains an ad-hoc signed, unnotarized preview.
+
 ## 1.3.1 Preview 1 — 2026-10-20
 
 - Add a shared QuietBar logo, macOS app icon and repository artwork.

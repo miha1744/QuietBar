@@ -4,8 +4,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 APP_NAME="QuietBar"
-VERSION="1.3.1"
-BUILD_VERSION="5"
+VERSION="1.4.0"
+BUILD_VERSION="6"
 BUNDLE_ID="local.quietbar.app"
 MIN_MACOS="14.0"
 BUILD_DIR="${BUILD_DIR:-$SCRIPT_DIR/build}"
@@ -21,12 +21,12 @@ Usage: ./build.sh [--build-dir PATH] [--output-dir PATH] [--hardened-runtime] [-
 
 Builds a universal arm64 + x86_64 macOS app and creates:
   QuietBar.app
-  QuietBar-1.3.1-universal.zip
-  QuietBar-1.3.1-universal.dmg
+  QuietBar-1.4.0-universal.zip
+  QuietBar-1.4.0-universal.dmg
   QuietBar-source.zip
   QuietBar-инструкция.txt (when README.txt is present)
 
-The app ZIP contains a QuietBar-1.3.1 folder with the app and README.txt.
+The app ZIP contains a QuietBar-1.4.0 folder with the app and README.txt.
 The read-only DMG contains the app, an Applications shortcut, and README.txt.
 
 BUILD_DIR and OUTPUT_DIR may also be supplied as environment variables.
@@ -42,7 +42,7 @@ its SHA-1) and NOTARY_PROFILE (an existing notarytool keychain profile). It sign
 with hardened runtime, submits the app and DMG to Apple, staples both tickets,
 and requires Gatekeeper acceptance. Without those credentials it stops before
 building. This mode does not create certificates or purchase a developer account.
-The accepted set is published in OUTPUT_DIR/QuietBar-1.3.1-distribution/ only
+The accepted set is published in OUTPUT_DIR/QuietBar-1.4.0-distribution/ only
 after all checks pass. An existing distribution directory is never overwritten.
 USAGE
 }
@@ -216,6 +216,7 @@ cat > "$STAGED_APP/Contents/Info.plist" <<PLIST
 <plist version="1.0">
 <dict>
   <key>CFBundleDevelopmentRegion</key><string>en</string>
+  <key>CFBundleLocalizations</key><array><string>en</string><string>ru</string><string>de</string><string>es</string><string>fr</string><string>zh-Hans</string></array>
   <key>CFBundleDisplayName</key><string>$APP_NAME</string>
   <key>CFBundleExecutable</key><string>$APP_NAME</string>
   <key>CFBundleIdentifier</key><string>$BUNDLE_ID</string>
@@ -234,8 +235,10 @@ $ICON_PLIST
 </plist>
 PLIST
 printf 'APPL????' > "$STAGED_APP/Contents/PkgInfo"
-for LANGUAGE in en ru; do
+for LANGUAGE in en ru de es fr zh-Hans; do
   mkdir -p "$STAGED_APP/Contents/Resources/$LANGUAGE.lproj"
+  /usr/bin/plutil -lint "$SCRIPT_DIR/Resources/$LANGUAGE.lproj/Localizable.strings"
+  /usr/bin/ditto "$SCRIPT_DIR/Resources/$LANGUAGE.lproj/Localizable.strings" "$STAGED_APP/Contents/Resources/$LANGUAGE.lproj/Localizable.strings"
   cat > "$STAGED_APP/Contents/Resources/$LANGUAGE.lproj/InfoPlist.strings" <<'STRINGS'
 "CFBundleDisplayName" = "QuietBar";
 "CFBundleName" = "QuietBar";
@@ -326,7 +329,7 @@ rm -rf "$SOURCE_STAGE"
 mkdir -p "$SOURCE_STAGE"
 /usr/bin/ditto "$SCRIPT_DIR/Sources" "$SOURCE_STAGE/Sources"
 /usr/bin/ditto "$SCRIPT_DIR/build.sh" "$SOURCE_STAGE/build.sh"
-for SOURCE_DIRECTORY in docs scripts ci .github; do
+for SOURCE_DIRECTORY in Resources docs scripts ci .github; do
   if [[ -d "$SCRIPT_DIR/$SOURCE_DIRECTORY" ]]; then
     /usr/bin/ditto "$SCRIPT_DIR/$SOURCE_DIRECTORY" "$SOURCE_STAGE/$SOURCE_DIRECTORY"
   fi

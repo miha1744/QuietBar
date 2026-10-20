@@ -2,7 +2,7 @@
 
 # QuietBar
 
-**[Download universal DMG · 1.3.1 Preview](https://github.com/miha1744/QuietBar/releases/download/v1.3.1-preview.1/QuietBar-1.3.1-universal.dmg)** · [Release notes](https://github.com/miha1744/QuietBar/releases/tag/v1.3.1-preview.1) · [MIT license](LICENSE)
+**[Download universal DMG · 1.4.0 Preview](https://github.com/miha1744/QuietBar/releases/download/v1.4.0-preview.1/QuietBar-1.4.0-universal.dmg)** · [Release notes](https://github.com/miha1744/QuietBar/releases/tag/v1.4.0-preview.1) · [MIT license](LICENSE)
 
 [![Build and verify packages](https://github.com/miha1744/QuietBar/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/miha1744/QuietBar/actions/workflows/ci.yml)
 
@@ -21,9 +21,15 @@ The launcher targets the large purple sharing pill. In the observed macOS 15 and
 
 ## Interface
 
-<p align="center"><img src="docs/assets/interface-preview.png" width="480" alt="QuietBar application chooser in the Russian interface, shown in read-only preview mode"></p>
+<p align="center"><img src="docs/assets/interface-preview.png" width="480" alt="QuietBar application chooser and language selector, shown in read-only English preview mode"></p>
 
-The Russian interface in read-only preview mode. Capture and permissions are not changed in this screenshot.
+The interface supports **English, Russian, German, French, Spanish and Simplified Chinese**. It follows the system language; use **Interface language** in the window to override it without restarting. It falls back to English when none of the preferred system languages is supported. The image is a read-only preview.
+
+## Indicator demonstration
+
+![Recorded test snapshots: sharing pill visible, hidden, restored](docs/assets/demo.gif)
+
+Real snapshots from separate capture tests on **macOS 15.7.9, SIP disabled**, using our own ScreenCaptureKit fixture. The sharing pill disappears while complete frame counts grow; the small dot remains. This is not a continuous screencast or evidence for arbitrary apps. [Source frames, metrics and limitations](docs/assets/demo.md).
 
 ## Install
 
@@ -33,17 +39,17 @@ Preview builds are **ad hoc signed and unnotarized**. If macOS blocks a trusted 
 
 ## Use
 
-The interface is in Russian. On systems without the native API:
+On systems without the native API:
 
 1. Save documents and quit the app that captures or shares the screen.
-2. Choose **«Выбрать приложение…»** (Choose application), then **«Запустить через QuietBar»** (Launch through QuietBar).
+2. Choose **Choose application…**, then **Launch through QuietBar**.
 3. If asked, grant Apple Terminal Screen Recording in normal macOS settings, then retry. The selected app's own permissions must also be configured. QuietBar opens Terminal automatically.
-4. Start capture or reconnect. Check changing screen content, any remote input, and the native indicator separately. **«Приложение запущено»** means only that the launched process remains alive.
-5. Choose **«Завершить запуск»** to request normal app termination. Save or close documents if asked, then retry **«Проверить завершение»**. Launch normally through Finder afterwards.
+4. Start capture or reconnect. Check changing screen content, any remote input, and the native indicator separately. **Application launched** means only that the launched process remains alive.
+5. Choose **End launch** to request normal app termination. Save or close documents if asked, then retry **Check termination**. Launch normally through Finder afterwards.
 
 Terminal's permission applies to Terminal beyond this launch. The generic launcher does not force-quit running apps, alter their signatures, manage their services or enable itself automatically at login. An optional QuietBar login item opens QuietBar only.
 
-With the native API available, use **«Скрыть значки» / «Показать значки»** (Hide / Show icons). The pointer near the clock temporarily restores the group; quitting releases the filter.
+With the native API available, use **Hide icons / Show icons**. The pointer near the clock temporarily restores the group; quitting releases the filter.
 
 Use QuietBar on your own Mac, with the knowledge of anyone using it. **Hiding an indicator does not stop screen capture or remote access.** QuietBar does not disable SIP, grant privacy permissions or draw an overlay over the menu bar.
 
