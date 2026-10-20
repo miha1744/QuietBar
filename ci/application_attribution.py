@@ -12,10 +12,14 @@ import socket
 import subprocess
 import time
 
-from importlib.machinery import SourceFileLoader
+from importlib import util
 
 BASE = Path(__file__).resolve().parent
-BUILD = SourceFileLoader("qb_fixture_build", str(BASE / "build-application-fixtures.py")).load_module()
+BUILD_SPEC = util.spec_from_file_location("qb_fixture_build", BASE / "build-application-fixtures.py")
+if BUILD_SPEC is None or BUILD_SPEC.loader is None:
+    raise RuntimeError("Cannot load the CI fixture build module")
+BUILD = util.module_from_spec(BUILD_SPEC)
+BUILD_SPEC.loader.exec_module(BUILD)
 ALLOWED = frozenset(BUILD.IDS.values()) | {"com.apple.Terminal"}
 
 
