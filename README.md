@@ -2,6 +2,8 @@
 
 # QuietBar
 
+**[Download universal DMG · 1.3.1 Preview](https://github.com/miha1744/QuietBar/releases/download/v1.3.1-preview.1/QuietBar-1.3.1-universal.dmg)** · [Release notes](https://github.com/miha1744/QuietBar/releases/tag/v1.3.1-preview.1) · [MIT license](LICENSE)
+
 [![Build and verify packages](https://github.com/miha1744/QuietBar/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/miha1744/QuietBar/actions/workflows/ci.yml)
 
 **A quieter menu bar for macOS.** QuietBar provides a native indicator-group filter where the macOS API is available, and an experimental application launcher on older systems. The launcher now accepts a selected `.app`, rather than requiring Jump Desktop.
@@ -16,6 +18,12 @@
 The universal app targets **macOS 14+, Apple Silicon and Intel**. This is not a guarantee for every app, OS build or Mac. Independent launch agents, XPC/root capture helpers, existing app instances and launch constraints can prevent the launcher from working. Individual menu bar icon selection is not implemented.
 
 The launcher targets the large purple sharing pill. In the observed macOS 15 and 26 fixture runs, the small purple dot beside Control Center remained. It does not remove every privacy indicator or other menu bar icons.
+
+## Interface
+
+<p align="center"><img src="docs/assets/interface-preview.png" width="480" alt="QuietBar application chooser in the Russian interface, shown in read-only preview mode"></p>
+
+The Russian interface in read-only preview mode. Capture and permissions are not changed in this screenshot.
 
 ## Install
 

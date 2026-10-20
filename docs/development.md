@@ -52,3 +52,16 @@ This mode sends the packages to Apple. Use it only with authorization for that s
 ## Production launcher integration harness
 
 The separate `application-attribution.yml` workflow runs only on explicitly provisioned standard hosted macOS VMs. Its fixture apps and CI-only permission provisioning live in `ci/`, outside product sources. `--test-application-cycle` is guarded by hosted CI environment checks, fixed fixture bundle IDs and an output path within `RUNNER_TEMP`. It drives the production backend; the external harness separately measures capture and native indicator pixels. This workflow is distinct from read-only package verification. SIP-disabled VM evidence does not establish ordinary SIP-enabled desktop compatibility.
+
+## Brand artwork
+
+`docs/assets/logo.svg` is the vector master for the Q/window mark. The README banner and `social-preview.svg` use the same geometry. `Resources/AppIcon.icns` contains standard 16–1024 pixel representations; the ordinary build copies it into the app. Package verification decodes the icon and app manifest equality covers its ZIP/DMG copies.
+
+To regenerate PNGs and the icon set with Node.js and the `sharp` package available:
+
+```sh
+node scripts/render-brand.cjs
+iconutil -c icns build/QuietBar.iconset -o Resources/AppIcon.icns
+```
+
+The checked-in assets are already rendered; app builds do not need Node or sharp. `social-preview.png` is the 1280×640 repository link preview artwork; uploading it in GitHub repository settings is a separate operation.

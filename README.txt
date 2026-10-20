@@ -1,9 +1,9 @@
-QuietBar 1.3.0 (4) — экспериментальная версия
+QuietBar 1.3.1 (5) — экспериментальная версия
 macOS 14.0 и новее · Apple Silicon и Intel
 
 Установка
 
-Откройте QuietBar-1.3.0-universal.dmg, перетащите QuietBar.app в Applications
+Откройте QuietBar-1.3.1-universal.dmg, перетащите QuietBar.app в Applications
 («Программы»), извлеките образ и запустите установленную копию.
 Вводить команды в Терминале не нужно.
 

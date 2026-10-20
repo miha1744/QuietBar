@@ -1,5 +1,13 @@
 # Changes
 
+## 1.3.1 Preview 1 — 2026-10-20
+
+- Add a shared QuietBar logo, macOS app icon and repository artwork.
+- Add a direct preview download link and align the English and Russian project pages.
+- Verify that a decodable 1024-pixel app icon is present in the app, ZIP and DMG.
+
+App metadata is 1.3.1 (5). Product behavior and the 1.3.0 capture evidence are unchanged; this remains an ad-hoc signed, unnotarized preview.
+
 ## 1.3.0 Preview 1 — 2026-10-20
 
 - Add a generic `.app` chooser as the default fallback when the native filter API is absent.

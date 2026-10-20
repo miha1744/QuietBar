@@ -105,7 +105,13 @@ def verify_app(app, metadata, hardened, label):
     run(f"{label}: signature", [
         "/usr/bin/codesign", "--verify", "--strict", "--all-architectures", "--verbose=2", app,
     ])
-    REPORT["checks"].append(f"{label}: metadata, universal binary, deployment targets, signature")
+    require(metadata.get("CFBundleIconFile") == "AppIcon", f"{label}: app icon is not declared")
+    icon = app / "Contents/Resources/AppIcon.icns"
+    require(icon.is_file() and icon.read_bytes()[:4] == b"icns", f"{label}: valid ICNS header missing")
+    dimensions, _ = run(f"{label}: decode app icon", ["/usr/bin/sips", "-g", "pixelWidth", "-g", "pixelHeight", icon])
+    require(re.search(r"pixelWidth:\s+1024\b", dimensions) and re.search(r"pixelHeight:\s+1024\b", dimensions),
+            f"{label}: icon cannot be decoded at 1024 pixels")
+    REPORT["checks"].append(f"{label}: metadata, universal binary, deployment targets, signature, app icon")
 
 
 def verify_zip(path, root, required):

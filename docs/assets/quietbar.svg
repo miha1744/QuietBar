@@ -1,21 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
-  <title id="title">QuietBar — A quieter menu bar for macOS</title>
-  <desc id="desc">QuietBar project banner with a purple menu bar symbol. Experimental native macOS utility.</desc>
-  <defs>
-    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#13152b"/><stop offset="1" stop-color="#252344"/></linearGradient>
-    <linearGradient id="accent" x2="1" y2="1"><stop stop-color="#a69aff"/><stop offset="1" stop-color="#7565f3"/></linearGradient>
-  </defs>
-  <rect width="1200" height="360" rx="28" fill="url(#bg)"/>
-  <circle cx="1110" cy="18" r="230" fill="#8271f3" opacity=".075"/>
-  <circle cx="1080" cy="-10" r="162" fill="#b3a7ff" opacity=".055"/>
-  <g transform="translate(72 92)">
-    <rect width="126" height="126" rx="32" fill="url(#accent)"/>
-    <rect x="25" y="34" width="76" height="58" rx="10" fill="none" stroke="#fff" stroke-width="5"/>
-    <path d="M27 50h72" stroke="#fff" stroke-width="5"/>
-    <circle cx="36" cy="43" r="2" fill="#fff"/><circle cx="43" cy="43" r="2" fill="#fff"/>
-    <path d="m47 70 10 10 23-23" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-  </g>
-  <text x="238" y="154" fill="#f8f7ff" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif" font-size="64" font-weight="700" letter-spacing="-2">QuietBar</text>
-  <text x="240" y="203" fill="#c0bdd7" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif" font-size="25">A quieter menu bar for macOS.</text>
-  <text x="240" y="258" fill="#a89df4" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif" font-size="14" font-weight="600" letter-spacing="2.8">NATIVE APP  ·  MACOS 14+  ·  EXPERIMENTAL</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc"><title id="title">QuietBar</title><desc id="desc">A quieter menu bar for macOS. Experimental preview for macOS 14 and later.</desc><defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#111020"/><stop offset="1" stop-color="#221B39"/></linearGradient></defs><rect width="1200" height="360" rx="24" fill="url(#bg)"/><path d="M1100 -60c-210 80-310 210-240 400s290 140 470 310" fill="none" stroke="#BDB0FF" stroke-opacity=".07" stroke-width="100"/><path d="M1160 -80c-210 80-310 210-240 400s290 140 470 310" fill="none" stroke="#BDB0FF" stroke-opacity=".07" stroke-width="2"/><g transform="translate(60 76) scale(0.40625)"><defs>
+ <linearGradient id="tile" x1=".12" y1="0" x2=".9" y2="1"><stop stop-color="#A99BFF"/><stop offset=".48" stop-color="#8170F4"/><stop offset="1" stop-color="#5B45CD"/></linearGradient>
+ <linearGradient id="edge" x2="0" y2="1"><stop stop-color="#FFF" stop-opacity=".5"/><stop offset="1" stop-color="#FFF" stop-opacity=".04"/></linearGradient>
+</defs>
+<rect x="32" y="32" width="448" height="448" rx="112" fill="url(#tile)"/>
+<rect x="33" y="33" width="446" height="446" rx="111" fill="none" stroke="url(#edge)" stroke-width="2"/>
+<g fill="none" stroke="#FFF" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M330 350H181c-24 0-43-19-43-43V198c0-24 19-43 43-43h150c24 0 43 19 43 43v99" stroke-width="24"/>
+ <path d="M151 216h210" stroke-width="16"/>
+ <path d="m291 301 83 83" stroke-width="28"/>
+</g>
+<g fill="#FFF"><circle cx="169" cy="186" r="6"/><circle cx="190" cy="186" r="6"/></g></g><text x="292" y="164" fill="#FCFAFF" font-family="-apple-system,BlinkMacSystemFont,Arial,sans-serif" font-size="66" font-weight="700" letter-spacing="-2.8">QuietBar</text><text x="294" y="216" fill="#C2BCD4" font-family="-apple-system,BlinkMacSystemFont,Arial,sans-serif" font-size="26">A quieter menu bar for macOS.</text><text x="292" y="261" fill="#A99DF8" font-family="-apple-system,BlinkMacSystemFont,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="2">MACOS 14+  /  APPLE SILICON + INTEL  /  PREVIEW</text></svg>
