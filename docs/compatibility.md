@@ -14,6 +14,19 @@ This page separates the app’s build target, observed native behavior and exper
 
 The local observations above are explicitly scoped maintainer reports. They should not be read as independently reproducible public test records.
 
+## Public app build and CLI checks
+
+[The first product CI run](https://github.com/miha1744/QuietBar/actions/runs/39394186862) passed for source commit `bb189879d79874aa058ec0a75f752bfdeccf4c26` on all four hosts below. These are checks of QuietBar itself, separate from the capture probe experiments.
+
+| Actual macOS | Host architecture | Universal package and read-only CLI checks | Native assessment API |
+| --- | --- | --- | --- |
+| 14.8.9 | arm64 | Passed | Unavailable |
+| 15.7.9 | arm64 | Passed | Unavailable |
+| 15.7.9 | x86_64 | Passed | Unavailable |
+| 26.6.2 | arm64 | Passed | Unavailable |
+
+Each host built and verified the universal app, ZIP and DMG and ran the three documented CLI checks. All four hosts reported SIP disabled. No Jump agent was launched, no privacy permission was granted, and GUI capture/input/indicator acceptance was not run. These results establish package integrity and CLI execution on the listed hosts, not successful Jump hiding.
+
 ## Public ScreenCaptureKit measurements
 
 The separate [macOS native menu bar probe](https://github.com/miha1744/macos-native-menubar-probe) records experiments with its **own SCStream**, not Jump Desktop. In the [19 October A–B–A experiment](https://github.com/miha1744/macos-native-menubar-probe/blob/main/results/attribution-2026-10-19.md), A launched through LaunchServices, B through Terminal and detached `screen`, then A ran again.

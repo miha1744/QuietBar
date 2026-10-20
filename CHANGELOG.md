@@ -1,15 +1,17 @@
 # Changes
 
-## Unreleased — public repository draft
+## 1.2.0 Preview 1 — 2026-10-20
 
 - Add English and Russian documentation, architecture notes and an evidence-based compatibility matrix.
 - Add build and package verification workflows and a structured bug report form.
 - Add the MIT license for QuietBar contributions and retain the original Stash MIT notice.
 - Include the project license in the app bundle and documentation and CI tooling in the source archive.
 
-These changes prepare the existing local 1.2.0 source for review. They do not add
-per-icon controls or establish compatibility with additional macOS releases.
-No public product release has been published from this repository draft.
+The first public preview is tagged `v1.2.0-preview.1`; app metadata remains
+1.2.0 (3). The source and packages are experimental. Public CI passed package
+integrity and read-only CLI checks on macOS 14, 15 (arm64 and Intel) and 26.
+It did not verify real Jump capture, input or indicator hiding. These changes
+do not add per-icon controls.
 
 ## 1.2.0 — existing local build
 

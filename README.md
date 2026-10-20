@@ -2,6 +2,8 @@
 
 # QuietBar
 
+[![Build and verify packages](https://github.com/miha1744/QuietBar/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/miha1744/QuietBar/actions/workflows/ci.yml)
+
 **A quieter menu bar for macOS.**
 
 QuietBar is a small, native macOS utility focused on the purple screen-sharing indicator. It offers a native hiding mode where the required system API exists, plus an experimental launch mode for Jump Desktop Connect on older macOS versions.
@@ -21,11 +23,11 @@ The app builds for **macOS 14+**, on **Apple Silicon and Intel**. A universal bi
 
 QuietBar currently has one mode-level toggle. It does not offer individual app or icon selection. The native mode may also hide AirDrop, Focus and Now Playing as part of the same system group.
 
-## Build and install
+## Install or build
 
-This source snapshot includes a local packaging script. No published binary release is linked here.
+Download the universal DMG from [1.2.0 Preview 1](https://github.com/miha1744/QuietBar/releases/tag/v1.2.0-preview.1), drag QuietBar to Applications, eject the image and launch the installed copy. This is an **experimental, unnotarized preview**. No Terminal commands need to be entered to use the packaged app.
 
-On a Mac with Xcode Command Line Tools installed, run from the repository directory:
+To build from source on a Mac with Xcode Command Line Tools installed, run from the repository directory:
 
 ```sh
 ./build.sh
