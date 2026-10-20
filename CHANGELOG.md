@@ -1,5 +1,11 @@
 # Changes
 
+## Unreleased
+
+- Define the broader app-independent menu bar visibility direction in both READMEs.
+- Separate platform backends, planned item rules and application-specific adapters.
+- Add a roadmap; the current preview's behavior and compatibility are unchanged.
+
 ## 1.2.0 Preview 1 — 2026-10-20
 
 - Add English and Russian documentation, architecture notes and an evidence-based compatibility matrix.

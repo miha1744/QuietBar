@@ -6,9 +6,11 @@
 
 **A quieter menu bar for macOS.**
 
-QuietBar is a small, native macOS utility focused on the purple screen-sharing indicator. It offers a native hiding mode where the required system API exists, plus an experimental launch mode for Jump Desktop Connect on older macOS versions.
+QuietBar is a native macOS utility for controlling what appears in your menu bar. Its direction is **visibility rules for app icons, supported system items and screen-sharing indicators**, across remote desktop, recording and everyday utility use cases.
 
-[Русский](docs/README.ru.md) · [Compatibility & evidence](docs/compatibility.md) · [How it works](docs/architecture.md)
+The current preview provides an app-independent native indicator-group filter and one experimental app adapter for older systems: Jump Desktop Connect. Individual icon selection and additional app adapters are still planned.
+
+[Русский](docs/README.ru.md) · [Compatibility & evidence](docs/compatibility.md) · [How it works](docs/architecture.md) · [Roadmap](docs/roadmap.md)
 
 Use QuietBar on your own Mac, with the knowledge of anyone using it. **Hiding an indicator does not stop screen capture or remote access.**
 
@@ -16,12 +18,14 @@ Use QuietBar on your own Mac, with the knowledge of anyone using it. **Hiding an
 
 | Mode | Current status |
 | --- | --- |
-| Native system filter | Indicator-group hiding was observed on macOS 27.0.1, Apple Silicon. Uses a private API and can change with macOS updates. |
-| Experimental Jump launcher | Implemented for macOS 14 and later when the native API is absent. A real Jump session, its image, input and hidden indicator still need end-to-end validation. |
+| App-independent native filter | Indicator-group hiding was observed on macOS 27.0.1, Apple Silicon. Uses a private API and can change with macOS updates. |
+| Jump Desktop Connect adapter | An experimental launch integration for macOS 14 and later when the native API is absent. A real Jump session, its image, input and hidden indicator still need end-to-end validation. |
 
 The app builds for **macOS 14+**, on **Apple Silicon and Intel**. A universal binary is a build target, not a promise that every version or Mac has been tested. See the [evidence matrix](docs/compatibility.md).
 
 QuietBar currently has one mode-level toggle. It does not offer individual app or icon selection. The native mode may also hide AirDrop, Focus and Now Playing as part of the same system group.
+
+The native filter works through macOS's menu bar machinery and is not tied to Jump. The older-system launch integration is app-specific: other remote desktop or recording apps require their own implementation and validation. Jump is the first adapter, not the boundary of the project.
 
 ## Install or build
 
@@ -43,7 +47,7 @@ The current app interface is in Russian. Open its menu bar item to return to set
 
 **Native mode:** choose **«Скрыть значки»** (Hide icons). Choose **«Показать значки»** (Show icons) to restore them. Moving the pointer near the clock temporarily restores the group so Notification Center remains accessible. Quitting QuietBar releases the filter.
 
-**Experimental Jump mode:** preparation restarts the current user’s Jump agent and can interrupt your connection. Keep local access available for the first trial.
+**Jump Desktop Connect adapter (experimental):** preparation restarts the current user’s Jump agent and can interrupt your connection. Keep local access available for the first trial.
 
 1. Install Jump Desktop Connect in `/Applications`. In its settings, enable **General → Start Jump Desktop when my computer starts** yourself. See [Jump’s settings reference](https://docs.jumpdesktop.com/connect/settings-reference/).
 2. Choose **«Подготовить Jump»** (Prepare Jump). If prompted, use **«Настроить разрешения…»** to grant Terminal Screen Recording and Accessibility through macOS settings. QuietBar opens Terminal automatically; no commands need to be entered. Keep Jump’s own permissions enabled too.
@@ -56,7 +60,7 @@ To start QuietBar at login, keep it in a permanent location and enable its login
 
 ## Next steps
 
-The priority is real Jump validation on SIP-enabled Macs, including reconnect and recovery. Per-app or per-item rules are a possible future direction for compatible native APIs; they are not implemented. The legacy launcher remains specific to Jump Desktop Connect.
+The next product step is an icon inventory and per-app/per-item visibility rules on compatible native APIs. App-specific integrations will remain separate adapters, each with its own OS and behavior evidence. The existing Jump adapter also needs real session, reconnect and recovery validation on SIP-enabled Macs. See the [roadmap](docs/roadmap.md) for scope and acceptance criteria.
 
 ## License and credits
 

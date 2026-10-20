@@ -23,15 +23,18 @@ Do not commit screenshots of someone else's desktop.
 
 ## Useful areas to work on
 
-1. Reproduce a complete Jump session on a documented macOS version with SIP enabled:
-   verify changing image, mouse, keyboard, indicator state, and restoration.
-2. Investigate per-app or per-system-item rules on macOS versions that provide the
-   native assessment API. These controls are not implemented in QuietBar yet.
+1. Investigate per-app or per-system-item rules on macOS versions that provide the
+   native assessment API. An item inventory and selection controls are not implemented yet.
+2. Validate application adapters on a documented macOS version with SIP enabled.
+   For the existing Jump adapter, verify changing image, mouse, keyboard, reconnect,
+   indicator state and restoration. Additional apps need their own adapter evidence.
 3. Improve translations and permission setup without changing security settings automatically.
 
 Changes should not edit TCC databases, disable SIP, modify Jump's system daemon,
 or terminate unrelated processes. Coordinate any new application adapter before
 expanding the fixed Jump launcher into a general-purpose launcher.
+
+See the [roadmap](docs/roadmap.md) for the broader product scope and adapter criteria.
 
 Contributions are offered under the [MIT license](LICENSE). Preserve all existing
 third-party notices.

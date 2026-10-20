@@ -2,6 +2,8 @@
 
 QuietBar is an Objective-C/AppKit menu bar app. It selects a backend by probing the running system for the native assessment API, rather than assuming support from the macOS version. The fallback is a fixed Jump Desktop Connect launch wrapper. Both implement the [`QBHidingBackend`](../Sources/QBFilter.h) interface.
 
+The product direction is app-independent menu bar visibility control. Platform backends provide the macOS mechanism; future visibility rules will choose which supported items to show; app-specific adapters handle integrations that need a particular launch path. The native backend already operates independently of a capture app. The current legacy code is the first concrete adapter, not a general launcher. See the [roadmap](roadmap.md) for planned rules and additional adapters.
+
 ```mermaid
 flowchart TD
     App[QuietBar menu bar app] --> Probe{Native assessment API available?}
