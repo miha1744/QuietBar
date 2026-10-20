@@ -15,6 +15,8 @@
 
 The universal app targets **macOS 14+, Apple Silicon and Intel**. This is not a guarantee for every app, OS build or Mac. Independent launch agents, XPC/root capture helpers, existing app instances and launch constraints can prevent the launcher from working. Individual menu bar icon selection is not implemented.
 
+The launcher targets the large purple sharing pill. In the observed macOS 15 and 26 fixture runs, the small purple dot beside Control Center remained. It does not remove every privacy indicator or other menu bar icons.
+
 ## Install
 
 Download the universal DMG from [GitHub Releases](https://github.com/miha1744/QuietBar/releases), drag QuietBar to Applications, eject the image and launch the installed copy. No Terminal commands need to be entered.

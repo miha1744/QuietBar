@@ -4,7 +4,7 @@ Small, reproducible contributions help most: a documented macOS result, a focuse
 bug fix, or an improvement to setup and recovery.
 
 Read the [architecture](docs/architecture.md), [compatibility evidence](docs/compatibility.md)
-and [development guide](docs/development.md) before changing either backend.
+and [development guide](docs/development.md) before changing a backend.
 
 ## Before opening a pull request
 
@@ -14,7 +14,7 @@ and [development guide](docs/development.md) before changing either backend.
 - Keep preparation, capture, remote input and indicator visibility as separate results.
   A successful build or a `prepared` agent is not a successful screen-sharing test.
 - Run the relevant package verification from the development guide. Avoid changing
-  actual services or permissions as part of an unattended test.
+  actual services or permissions on an ordinary user Mac as part of an unattended test.
 - Keep real user data, credentials and unredacted diagnostic paths out of commits and issues.
 
 Tests that involve Jump should use your own Mac or a machine whose owner has
@@ -25,14 +25,14 @@ Do not commit screenshots of someone else's desktop.
 
 1. Investigate per-app or per-system-item rules on macOS versions that provide the
    native assessment API. An item inventory and selection controls are not implemented yet.
-2. Validate application adapters on a documented macOS version with SIP enabled.
+2. Validate the selected-application launcher and adapters on a documented macOS version with SIP enabled.
    For the existing Jump adapter, verify changing image, mouse, keyboard, reconnect,
-   indicator state and restoration. Additional apps need their own adapter evidence.
+   indicator state and restoration. Record each selected app and version; independent capture helpers may need a separate adapter.
 3. Improve translations and permission setup without changing security settings automatically.
 
 Changes should not edit TCC databases, disable SIP, modify Jump's system daemon,
-or terminate unrelated processes. Coordinate any new application adapter before
-expanding the fixed Jump launcher into a general-purpose launcher.
+or terminate unrelated processes. Keep generic launch validation and graceful
+termination separate from the fixed Jump adapter's service-specific lifecycle.
 
 See the [roadmap](docs/roadmap.md) for the broader product scope and adapter criteria.
 

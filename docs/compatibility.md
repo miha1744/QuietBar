@@ -6,7 +6,11 @@ This page separates the app’s build target, observed native behavior and exper
 
 Version 1.3 adds `.app` selection and direct launch through the production Terminal → screen → controller path. It no longer requires Jump as the default fallback. Generic launch support is experimental: independent services, XPC/root helpers, existing instances and launch constraints are not covered by direct-main-executable attribution. Arbitrary third-party apps on SIP-enabled macOS 14/15/26 remain unverified. A prepared process is never recorded as verified capture or hidden indicator.
 
-The product integration harness and its exact results will be recorded separately from the historical probe evidence below. Package checks do not supply that evidence.
+[The product launcher run](https://github.com/miha1744/QuietBar/actions/runs/39415956457) completed on macOS 14.8.9 arm64, 15.7.9 arm64/x86_64 and 26.6.2 arm64. Both direct and delayed own `.app` fixtures showed a native sharing pill visible / absent / visible across ordinary / product / ordinary launch, with changing complete frames in B. All VMs had **SIP disabled** and CI-only permission provisioning. The small purple dot beside Control Center remained on 15 and 26.
+
+[Retained native images and sanitized measurements](evidence/1.3.0/README.md) document the exact scope. This does not establish third-party capture/input/reconnect or normal SIP-enabled compatibility. Fixtures exited cooperatively before final product acknowledgement; active third-party shutdown and document prompts remain untested.
+
+[Version 1.3 package CI](https://github.com/miha1744/QuietBar/actions/runs/39415216664) also passed on those four configurations: universal/min14 binaries, signatures with hardened runtime, ZIP/DMG integrity and 51 generic helper fixtures. This is separate from capture measurements.
 
 ## Product status
 
@@ -20,7 +24,7 @@ The product integration harness and its exact results will be recorded separatel
 
 The local observations above are explicitly scoped maintainer reports. They should not be read as independently reproducible public test records.
 
-## Public app build and CLI checks
+## Historical 1.2 public app build and CLI checks
 
 [The first product CI run](https://github.com/miha1744/QuietBar/actions/runs/39394186862) passed for source commit `bb189879d79874aa058ec0a75f752bfdeccf4c26` on all four hosts below. These are checks of QuietBar itself, separate from the capture probe experiments.
 

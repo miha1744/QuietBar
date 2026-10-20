@@ -1,0 +1,1642 @@
+{
+  "schema": 1,
+  "version": "1.3.0 (4)",
+  "productSourcesCommit": "e88e74d2808f13e261e948a02288b64723d10cd0",
+  "harnessCommit": "24772cb8b3f02fdb33fcb1162a47c096872b8f02",
+  "runURL": "https://github.com/miha1744/QuietBar/actions/runs/39415956457",
+  "scope": "Own direct/delayed SCStream fixture apps through the production selected-application backend; hosted SIP-disabled VMs only",
+  "ordinarySIPEnabledCompatibilityAccepted": false,
+  "arbitraryThirdPartyCompatibilityAccepted": false,
+  "manualNativeScreenshotReview": "24-second A1/B/A2 representatives for each fixture and OS; all show visible / absent / visible sharing pill",
+  "shutdownScope": "Fixture cooperatively stops its stream and exits before product stop; ownership and final exit acknowledgement verified, active app termination/document prompts not exercised",
+  "lanes": [
+    {
+      "label": "macos-14",
+      "environment": {
+        "architecture": "arm64",
+        "imageOS": "macos14",
+        "imageVersion": "20260831.0302.1",
+        "os": "ProductName:\t\tmacOS\nProductVersion:\t\t14.8.9\nBuildVersion:\t\t23J631\n",
+        "runID": "39415956457",
+        "scope": "Hosted VM own-fixture measurement; no ordinary SIP-on or arbitrary third-party claim",
+        "sip": "System Integrity Protection status: disabled."
+      },
+      "cleanupRemainingRecordedPIDs": [],
+      "fixtures": {
+        "direct": {
+          "observedSharingPillPattern": "visible / absent / visible",
+          "automatedPattern": "VISIBLE_ABSENT_VISIBLE_CANDIDATE",
+          "productProcessLinkAndProtocolVerified": true,
+          "phases": {
+            "A1": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 43,
+                  "animatedPixelChanges": 41,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 801,
+                  "wholeNativePurplePixels": 801,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                },
+                {
+                  "completeFrames": 81,
+                  "animatedPixelChanges": 78,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 801,
+                  "wholeNativePurplePixels": 801,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                },
+                {
+                  "completeFrames": 121,
+                  "animatedPixelChanges": 118,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 801,
+                  "wholeNativePurplePixels": 801,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                }
+              ],
+              "representativeNativeImage": "macos-14-direct-A1-24s.png",
+              "imageSHA256": "f00bc649025ff478825bc5ca2e2fbdbb33980ec627e8be7c3fdc0ff0931fd316"
+            },
+            "B": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 43,
+                  "animatedPixelChanges": 39,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 0,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 85,
+                  "animatedPixelChanges": 81,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 0,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 124,
+                  "animatedPixelChanges": 120,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 0,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                }
+              ],
+              "representativeNativeImage": "macos-14-direct-B-24s.png",
+              "imageSHA256": "cf1c6dddfd0a30d70ecd56e025d969ed05cae3be5832ec4b77bda82eacdcf6a8"
+            },
+            "A2": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 45,
+                  "animatedPixelChanges": 41,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 801,
+                  "wholeNativePurplePixels": 801,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 86,
+                  "animatedPixelChanges": 82,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 801,
+                  "wholeNativePurplePixels": 801,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 125,
+                  "animatedPixelChanges": 120,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 801,
+                  "wholeNativePurplePixels": 801,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                }
+              ],
+              "representativeNativeImage": "macos-14-direct-A2-24s.png",
+              "imageSHA256": "593e76545fcb6d06d491ad7a5994d0740bf6c10448e25b21b1a2a032d0c4e780"
+            }
+          }
+        },
+        "delayed": {
+          "observedSharingPillPattern": "visible / absent / visible",
+          "automatedPattern": "VISIBLE_ABSENT_VISIBLE_CANDIDATE",
+          "productProcessLinkAndProtocolVerified": true,
+          "phases": {
+            "A1": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 46,
+                  "animatedPixelChanges": 42,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 801,
+                  "wholeNativePurplePixels": 801,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                },
+                {
+                  "completeFrames": 86,
+                  "animatedPixelChanges": 82,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 801,
+                  "wholeNativePurplePixels": 801,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                },
+                {
+                  "completeFrames": 126,
+                  "animatedPixelChanges": 122,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 801,
+                  "wholeNativePurplePixels": 801,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                }
+              ],
+              "representativeNativeImage": "macos-14-delayed-A1-24s.png",
+              "imageSHA256": "f7cfcafd221cce20d8388739a99c7f729588d4eb8a8b017e50c27ddcdb57f4f7"
+            },
+            "B": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 45,
+                  "animatedPixelChanges": 42,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 0,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 85,
+                  "animatedPixelChanges": 82,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 0,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 125,
+                  "animatedPixelChanges": 122,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 0,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                }
+              ],
+              "representativeNativeImage": "macos-14-delayed-B-24s.png",
+              "imageSHA256": "8a0012960b400f09f18df40e952e5f63064e77af71ea03fe379eb76104eb9df6"
+            },
+            "A2": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 45,
+                  "animatedPixelChanges": 42,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 801,
+                  "wholeNativePurplePixels": 801,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 85,
+                  "animatedPixelChanges": 82,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 801,
+                  "wholeNativePurplePixels": 801,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 125,
+                  "animatedPixelChanges": 122,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 801,
+                  "wholeNativePurplePixels": 801,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 45,
+                      "x": 1651,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                }
+              ],
+              "representativeNativeImage": "macos-14-delayed-A2-24s.png",
+              "imageSHA256": "17e26fb937008794efa97b64ef7745790cecf76ba02cec217d0e7760f22b3e18"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "macos-15",
+      "environment": {
+        "architecture": "arm64",
+        "imageOS": "macos15",
+        "imageVersion": "20260907.0337.1",
+        "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830\n",
+        "runID": "39415956457",
+        "scope": "Hosted VM own-fixture measurement; no ordinary SIP-on or arbitrary third-party claim",
+        "sip": "System Integrity Protection status: disabled."
+      },
+      "cleanupRemainingRecordedPIDs": [],
+      "fixtures": {
+        "direct": {
+          "observedSharingPillPattern": "visible / absent / visible",
+          "automatedPattern": "VISIBLE_ABSENT_VISIBLE_CANDIDATE",
+          "productProcessLinkAndProtocolVerified": true,
+          "phases": {
+            "A1": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 54,
+                  "animatedPixelChanges": 44,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                },
+                {
+                  "completeFrames": 91,
+                  "animatedPixelChanges": 80,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                },
+                {
+                  "completeFrames": 131,
+                  "animatedPixelChanges": 120,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                }
+              ],
+              "representativeNativeImage": "macos-15-direct-A1-24s.png",
+              "imageSHA256": "6bf2def4e42fb297ef8616d63789d6a02ee66ad2ae7bed5aaed5cc93f1e95452"
+            },
+            "B": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 44,
+                  "animatedPixelChanges": 42,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 24,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 84,
+                  "animatedPixelChanges": 82,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 24,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 124,
+                  "animatedPixelChanges": 122,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 24,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                }
+              ],
+              "representativeNativeImage": "macos-15-direct-B-24s.png",
+              "imageSHA256": "ad0d0a435c4b09245407dda7470f5fbdac23788d9b77a1f7f75eaf38aad02f61"
+            },
+            "A2": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 45,
+                  "animatedPixelChanges": 42,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 85,
+                  "animatedPixelChanges": 82,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 125,
+                  "animatedPixelChanges": 122,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                }
+              ],
+              "representativeNativeImage": "macos-15-direct-A2-24s.png",
+              "imageSHA256": "12dcecad23012f59820286bf991c56ba8ebd5471939765281d0a4f93c4a60ac6"
+            }
+          }
+        },
+        "delayed": {
+          "observedSharingPillPattern": "visible / absent / visible",
+          "automatedPattern": "VISIBLE_ABSENT_VISIBLE_CANDIDATE",
+          "productProcessLinkAndProtocolVerified": true,
+          "phases": {
+            "A1": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 46,
+                  "animatedPixelChanges": 45,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                },
+                {
+                  "completeFrames": 86,
+                  "animatedPixelChanges": 85,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                },
+                {
+                  "completeFrames": 125,
+                  "animatedPixelChanges": 123,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                }
+              ],
+              "representativeNativeImage": "macos-15-delayed-A1-24s.png",
+              "imageSHA256": "3c170f4ae964f5526afc39cdb3a0e5274bbea11b153f90c0f6f84cbddee4ec75"
+            },
+            "B": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 46,
+                  "animatedPixelChanges": 42,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 24,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 86,
+                  "animatedPixelChanges": 82,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 24,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 127,
+                  "animatedPixelChanges": 123,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 24,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                }
+              ],
+              "representativeNativeImage": "macos-15-delayed-B-24s.png",
+              "imageSHA256": "7581ecd29f7d3862163d7e90d45f3a3785f25f14e9c5aa3e3ccdb9a5dd1745f5"
+            },
+            "A2": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 44,
+                  "animatedPixelChanges": 40,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 84,
+                  "animatedPixelChanges": 80,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 124,
+                  "animatedPixelChanges": 120,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 752,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                }
+              ],
+              "representativeNativeImage": "macos-15-delayed-A2-24s.png",
+              "imageSHA256": "b16bf33daf37acd3cab16798fd75fc548e4aed11e6b37f13706f54b83aebd19c"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "macos-15-intel",
+      "environment": {
+        "architecture": "x86_64",
+        "imageOS": "macos15",
+        "imageVersion": "20260824.0482.1",
+        "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830\n",
+        "runID": "39415956457",
+        "scope": "Hosted VM own-fixture measurement; no ordinary SIP-on or arbitrary third-party claim",
+        "sip": "System Integrity Protection status: disabled."
+      },
+      "cleanupRemainingRecordedPIDs": [],
+      "fixtures": {
+        "direct": {
+          "observedSharingPillPattern": "visible / absent / visible",
+          "automatedPattern": "VISIBLE_ABSENT_VISIBLE_CANDIDATE",
+          "productProcessLinkAndProtocolVerified": true,
+          "phases": {
+            "A1": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 51,
+                  "animatedPixelChanges": 41,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                },
+                {
+                  "completeFrames": 89,
+                  "animatedPixelChanges": 79,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                },
+                {
+                  "completeFrames": 129,
+                  "animatedPixelChanges": 119,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                }
+              ],
+              "representativeNativeImage": "macos-15-intel-direct-A1-24s.png",
+              "imageSHA256": "fccb816f2ec05cc68de39f96e5e789504d1e5a8204780eadf8edc642add1c915"
+            },
+            "B": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 48,
+                  "animatedPixelChanges": 42,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 24,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 87,
+                  "animatedPixelChanges": 81,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 24,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 127,
+                  "animatedPixelChanges": 121,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 24,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                }
+              ],
+              "representativeNativeImage": "macos-15-intel-direct-B-24s.png",
+              "imageSHA256": "e2855188b0b18312ba70471b203e25f1eb52fd891d3f5c975cf2aa85740ccca9"
+            },
+            "A2": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 46,
+                  "animatedPixelChanges": 43,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 84,
+                  "animatedPixelChanges": 81,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 126,
+                  "animatedPixelChanges": 123,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                }
+              ],
+              "representativeNativeImage": "macos-15-intel-direct-A2-24s.png",
+              "imageSHA256": "89d18ccf43d8f617c91deaab391f35babf1a57510d6022f734f513dbca04d0c5"
+            }
+          }
+        },
+        "delayed": {
+          "observedSharingPillPattern": "visible / absent / visible",
+          "automatedPattern": "VISIBLE_ABSENT_VISIBLE_CANDIDATE",
+          "productProcessLinkAndProtocolVerified": true,
+          "phases": {
+            "A1": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 46,
+                  "animatedPixelChanges": 42,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                },
+                {
+                  "completeFrames": 86,
+                  "animatedPixelChanges": 82,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                },
+                {
+                  "completeFrames": 126,
+                  "animatedPixelChanges": 122,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                }
+              ],
+              "representativeNativeImage": "macos-15-intel-delayed-A1-24s.png",
+              "imageSHA256": "2e465f8ec6c326c20da0116cd7aa2efab2d2f63de5e06f8807db9a34133e1b2b"
+            },
+            "B": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 46,
+                  "animatedPixelChanges": 42,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 24,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 86,
+                  "animatedPixelChanges": 82,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 24,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 126,
+                  "animatedPixelChanges": 122,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 24,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                }
+              ],
+              "representativeNativeImage": "macos-15-intel-delayed-B-24s.png",
+              "imageSHA256": "d1f684ac453cc78b75fc31d50796373f44109acf0ed7e2be8a31c7cb5af94b62"
+            },
+            "A2": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 47,
+                  "animatedPixelChanges": 42,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 85,
+                  "animatedPixelChanges": 80,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 126,
+                  "animatedPixelChanges": 121,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 877,
+                  "wholeNativePurplePixels": 901,
+                  "measurementRects": [
+                    {
+                      "height": 24,
+                      "width": 48,
+                      "x": 1648,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                }
+              ],
+              "representativeNativeImage": "macos-15-intel-delayed-A2-24s.png",
+              "imageSHA256": "fb9891db4d40b7aa89e1225aa1a384df5b924cc0281331b22c525cb3dbb7254c"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "macos-26",
+      "environment": {
+        "architecture": "arm64",
+        "imageOS": "macos26",
+        "imageVersion": "20261013.0424.1",
+        "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83\n",
+        "runID": "39415956457",
+        "scope": "Hosted VM own-fixture measurement; no ordinary SIP-on or arbitrary third-party claim",
+        "sip": "System Integrity Protection status: disabled."
+      },
+      "cleanupRemainingRecordedPIDs": [],
+      "fixtures": {
+        "direct": {
+          "observedSharingPillPattern": "visible / absent / visible",
+          "automatedPattern": "VISIBLE_ABSENT_VISIBLE_CANDIDATE",
+          "productProcessLinkAndProtocolVerified": true,
+          "phases": {
+            "A1": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 50,
+                  "animatedPixelChanges": 43,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 795,
+                  "wholeNativePurplePixels": 823,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                },
+                {
+                  "completeFrames": 87,
+                  "animatedPixelChanges": 76,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 795,
+                  "wholeNativePurplePixels": 823,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                },
+                {
+                  "completeFrames": 128,
+                  "animatedPixelChanges": 116,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 795,
+                  "wholeNativePurplePixels": 823,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                }
+              ],
+              "representativeNativeImage": "macos-26-direct-A1-24s.png",
+              "imageSHA256": "75956fdeda6b3b51bc8fc3cf8a8ce36a2d44eab0dfbb13dd7f7eedbf9fc00c6c"
+            },
+            "B": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 47,
+                  "animatedPixelChanges": 40,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 28,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 88,
+                  "animatedPixelChanges": 79,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 28,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 129,
+                  "animatedPixelChanges": 120,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 28,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                }
+              ],
+              "representativeNativeImage": "macos-26-direct-B-24s.png",
+              "imageSHA256": "b02547c8c77c9dde7ced7a8920010f258729f8e4b62943741b7b7376203cf6f3"
+            },
+            "A2": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 47,
+                  "animatedPixelChanges": 41,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 795,
+                  "wholeNativePurplePixels": 823,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 89,
+                  "animatedPixelChanges": 82,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 795,
+                  "wholeNativePurplePixels": 823,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 128,
+                  "animatedPixelChanges": 121,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 795,
+                  "wholeNativePurplePixels": 823,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                }
+              ],
+              "representativeNativeImage": "macos-26-direct-A2-24s.png",
+              "imageSHA256": "00c37d65ca2c0bcca351f36c0217496ab17dbb704dedf27e64eca0c0ee4cb4dd"
+            }
+          }
+        },
+        "delayed": {
+          "observedSharingPillPattern": "visible / absent / visible",
+          "automatedPattern": "VISIBLE_ABSENT_VISIBLE_CANDIDATE",
+          "productProcessLinkAndProtocolVerified": true,
+          "phases": {
+            "A1": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 47,
+                  "animatedPixelChanges": 43,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 795,
+                  "wholeNativePurplePixels": 823,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                },
+                {
+                  "completeFrames": 88,
+                  "animatedPixelChanges": 82,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 795,
+                  "wholeNativePurplePixels": 823,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                },
+                {
+                  "completeFrames": 127,
+                  "animatedPixelChanges": 121,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 795,
+                  "wholeNativePurplePixels": 823,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": false
+                }
+              ],
+              "representativeNativeImage": "macos-26-delayed-A1-24s.png",
+              "imageSHA256": "95496e73c8d834f8b790e6f899fec89ae6aa72758fbf95de9cd69fd06cb3bc35"
+            },
+            "B": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 45,
+                  "animatedPixelChanges": 40,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 28,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 84,
+                  "animatedPixelChanges": 78,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 28,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 125,
+                  "animatedPixelChanges": 119,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 0,
+                  "regionPurplePixels": 0,
+                  "wholeNativePurplePixels": 28,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                }
+              ],
+              "representativeNativeImage": "macos-26-delayed-B-24s.png",
+              "imageSHA256": "0625f0759092d76013de532193fb8c3b183fabd288839a96cd50bdeb1ddf51a0"
+            },
+            "A2": {
+              "samples8_16_24seconds": [
+                {
+                  "completeFrames": 47,
+                  "animatedPixelChanges": 42,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 795,
+                  "wholeNativePurplePixels": 823,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 91,
+                  "animatedPixelChanges": 83,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 795,
+                  "wholeNativePurplePixels": 823,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                },
+                {
+                  "completeFrames": 130,
+                  "animatedPixelChanges": 120,
+                  "streamError": null,
+                  "nativeImageSaved": true,
+                  "streamImageSaved": true,
+                  "strictVisibleTargets": 1,
+                  "regionPurplePixels": 795,
+                  "wholeNativePurplePixels": 823,
+                  "measurementRects": [
+                    {
+                      "height": 30,
+                      "width": 48,
+                      "x": 744,
+                      "y": 0
+                    }
+                  ],
+                  "baselineRectsInherited": true
+                }
+              ],
+              "representativeNativeImage": "macos-26-delayed-A2-24s.png",
+              "imageSHA256": "cdd09a591b6fd7d9ac5a86313f70f134b37c91555cd37b0e0770aa73a10567b0"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

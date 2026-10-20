@@ -8,7 +8,7 @@
 - Keep launch readiness separate from verified capture and indicator hiding. Arbitrary app compatibility remains experimental.
 - Add pure controller/backend checks and a separate hosted integration harness.
 
-App metadata is 1.3.0 (4), minimum macOS 14.0, arm64 and x86_64. Preview builds are ad hoc signed and unnotarized.
+App metadata is 1.3.0 (4), minimum macOS 14.0, arm64 and x86_64. Preview builds are ad hoc signed and unnotarized. Package checks and own direct/delayed capture fixture measurements completed on macOS 14.8.9 arm64, 15.7.9 arm64/Intel and 26.6.2 arm64 with SIP disabled. [Exact evidence and limits](docs/evidence/1.3.0/README.md); arbitrary third-party and SIP-enabled acceptance remains unverified.
 
 ## Earlier unreleased documentation
 
