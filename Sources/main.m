@@ -4,6 +4,8 @@
 #import "QBFilter.h"
 #import "QBJumpBackend.h"
 #import "QBJumpController.h"
+#import "QBApplicationBackend.h"
+#import "QBApplicationController.h"
 
 static NSString *const QBEnabledKey = @"HideSystemItems";
 static NSString *const QBJumpEnabledKey = @"HideViaJumpLauncher";
@@ -47,6 +49,10 @@ static void PrintJSON(NSDictionary *value) {
 @interface QBApp : NSObject <NSApplicationDelegate, NSWindowDelegate>
 @property id<QBHidingBackend> filter;
 @property BOOL usesJumpBackend;
+@property BOOL usesApplicationBackend;
+@property id<QBHidingBackend> deferredBackend;
+@property BOOL deferredUsesJump;
+@property BOOL deferredEnabled;
 @property BOOL preview;
 @property BOOL restoringDefaults;
 @property BOOL terminationPending;
@@ -87,13 +93,28 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
     NSArray *arguments = NSProcessInfo.processInfo.arguments;
     self.preview = [arguments containsObject:@"--preview"];
     QBFilter *nativeFilter = [[QBFilter alloc] initWithClockTracking:YES];
-    self.usesJumpBackend = !nativeFilter.available || [arguments containsObject:@"--legacy-jump"];
+    self.usesJumpBackend = [arguments containsObject:@"--legacy-jump"];
+    self.usesApplicationBackend = !self.usesJumpBackend && (!nativeFilter.available || [arguments containsObject:@"--legacy-apps"]);
     self.restoringDefaults = YES;
     NSString *enabledKey = self.usesJumpBackend ? QBJumpEnabledKey : QBEnabledKey;
-    BOOL enabled = !self.preview && [NSUserDefaults.standardUserDefaults boolForKey:enabledKey];
-    self.filter = self.usesJumpBackend ? (id<QBHidingBackend>)[[QBJumpBackend alloc] initWithRecovery:!self.preview] : nativeFilter;
+    BOOL enabled = !self.preview && !self.usesApplicationBackend && [NSUserDefaults.standardUserDefaults boolForKey:enabledKey];
+    self.filter = self.usesJumpBackend ? (id<QBHidingBackend>)[[QBJumpBackend alloc] initWithRecovery:!self.preview]
+        : self.usesApplicationBackend ? (id<QBHidingBackend>)[[QBApplicationBackend alloc] initWithRecovery:!self.preview] : nativeFilter;
+    if (!self.preview && !self.usesApplicationBackend) {
+        NSString *base=[NSHomeDirectory() stringByAppendingPathComponent:@"Library/Application Support/QuietBar/Applications"];
+        for (NSString *name in [NSFileManager.defaultManager contentsOfDirectoryAtPath:base error:nil]) {
+            if (![[NSUUID alloc] initWithUUIDString:name]) continue;
+            // An OS update can make the native API available after a launcher
+            // session. Resolve that session before switching visibility backends.
+            self.deferredBackend=self.filter; self.deferredUsesJump=self.usesJumpBackend;
+            self.deferredEnabled=enabled;
+            self.usesApplicationBackend=YES; self.usesJumpBackend=NO; enabled=NO;
+            self.filter=[[QBApplicationBackend alloc] initWithRecovery:YES];
+            break;
+        }
+    }
     __weak QBApp *weakSelf = self;
-    self.filter.onChange = ^{ [weakSelf updateUI]; };
+    self.filter.onChange = ^{ [weakSelf backendDidChange]; };
     [self buildMenu];
     [self buildWindow];
     [self installSignalHandlers];
@@ -103,6 +124,22 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
     [self updateLoginUI];
     BOOL background = [NSProcessInfo.processInfo.arguments containsObject:@"--background"];
     if ((!self.filter.enabled || self.preview) && !background) [self showSettings:nil];
+}
+- (void)backendDidChange {
+    NSDictionary *diagnostics=[self launcherDiagnostics];
+    if (self.deferredBackend && ![diagnostics[@"cleanupPending"] boolValue]
+        && ![diagnostics[@"recovering"] boolValue]) {
+        BOOL visible=self.window.visible;
+        self.filter.onChange=nil; self.filter=self.deferredBackend; self.deferredBackend=nil;
+        self.usesApplicationBackend=NO; self.usesJumpBackend=self.deferredUsesJump;
+        __weak QBApp *weakSelf=self;
+        self.filter.onChange=^{ [weakSelf updateUI]; };
+        [self.window close]; [self buildWindow];
+        [self.filter setEnabled:self.deferredEnabled];
+        [self updateLoginUI];
+        if (visible) [self showSettings:nil];
+    }
+    [self updateUI];
 }
 - (void)buildMenu {
     self.statusItem = [NSStatusBar.systemStatusBar statusItemWithLength:NSSquareStatusItemLength];
@@ -128,14 +165,16 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
     self.window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0,0,600,MIN(hasLegacy ? 830 : 760,maxHeight))
         styleMask:NSWindowStyleMaskTitled|NSWindowStyleMaskClosable|NSWindowStyleMaskMiniaturizable
         backing:NSBackingStoreBuffered defer:NO];
-    self.window.title = self.preview ? @"QuietBar 1.2 — предпросмотр" : @"QuietBar";
+    self.window.title = self.preview ? @"QuietBar 1.3 — предпросмотр" : @"QuietBar";
     self.window.releasedWhenClosed = NO;
     self.window.delegate = self;
     [self.window center];
     [self.window setFrameAutosaveName:@"QuietBarSettings"];
     NSTextField *heading = Label(@"Уберите фиолетовый значок",24,NSColor.labelColor);
     heading.font = [NSFont systemFontOfSize:24 weight:NSFontWeightSemibold];
-    NSTextField *intro = Label(self.usesJumpBackend
+    NSTextField *intro = Label(self.usesApplicationBackend
+        ? @"Выберите приложение и запустите его через QuietBar. Экспериментальный способ для macOS 14 и новее; скрытие нужно проверить на вашем Mac."
+        : self.usesJumpBackend
         ? @"Экспериментальный способ для Jump Desktop на macOS 14 и новее. Подготовьте запуск, затем подключитесь заново и проверьте экран и управление."
         : @"Системный фильтр скрывает фиолетовый значок и часть значков macOS при работающем захвате экрана.",13,NSColor.secondaryLabelColor);
     self.statusTitle = Label(@"Значки видимы",20,NSColor.labelColor);
@@ -150,7 +189,8 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
     self.setupButton.hidden = YES;
     self.jumpButton = [NSButton buttonWithTitle:@"Открыть Jump Desktop Connect…" target:self action:@selector(openJump:)];
     self.jumpButton.bezelStyle = NSBezelStyleInline;
-    self.jumpButton.hidden = !self.usesJumpBackend;
+    self.jumpButton.hidden = !self.usesJumpBackend && !self.usesApplicationBackend;
+    if (self.usesApplicationBackend) self.jumpButton.title = @"Выбрать приложение…";
     self.jumpButton.enabled = !self.preview;
     NSStackView *cardStack = VStack(@[self.statusTitle,self.statusDescription,self.toggleButton,self.setupButton,self.jumpButton],10);
     NSBox *card = [[NSBox alloc] init];
@@ -172,10 +212,14 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
     self.loginSettingsButton.bezelStyle = NSBezelStyleInline;
     self.loginSettingsButton.hidden = YES;
     NSStackView *login = VStack(@[self.loginButton,self.loginDescription,self.loginSettingsButton],6);
-    NSTextField *details = Label(self.usesJumpBackend
+    NSTextField *details = Label(self.usesApplicationBackend
+        ? @"Закройте выбранное приложение перед запуском. При первом запуске разрешите Terminal запись экрана в настройках macOS. Разрешения самого приложения также должны быть настроены.\n\nОтдельные фоновые службы и уже работающие экземпляры могут использовать обычный путь захвата. Выключение QuietBar просит выбранное приложение завершиться; сохраните открытые документы."
+        : self.usesJumpBackend
         ? @"Первый запуск: разрешите Terminal запись экрана и универсальный доступ в настройках macOS. В Jump Desktop Connect включите General → Start Jump Desktop when my computer starts.\n\nКнопка «Подготовить Jump» перезапускает его пользовательский агент. Текущее соединение может прерваться. Выключение QuietBar возвращает обычный запуск."
         : @"Останутся часы, Wi-Fi, звук, Bluetooth, батарея и Пункт управления. У часов значки временно возвращаются, чтобы открывался Центр уведомлений. Выход из QuietBar возвращает значки.",12,NSColor.secondaryLabelColor);
-    self.modeDescription = Label(self.usesJumpBackend
+    self.modeDescription = Label(self.usesApplicationBackend
+        ? @"macOS 14+ · Intel и Apple Silicon. Запуск через QuietBar не гарантирует скрытие для каждого приложения. SIP не изменяется."
+        : self.usesJumpBackend
         ? @"macOS 14 и новее · Intel и Apple Silicon. Экспериментальный режим: проверьте подключение и скрытие значка на этом Mac."
         : @"Системный способ проверен на macOS 27.0.1 · Apple Silicon. Доступность API определяется при запуске.",11,NSColor.tertiaryLabelColor);
     NSView *divider = [[NSBox alloc] init]; [(NSBox *)divider setBoxType:NSBoxSeparator];
@@ -249,18 +293,42 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
             title=@"Возвращаем обычный запуск…";
             body=self.filter.errorMessage.length ? self.filter.errorMessage : @"Ждём завершения обёртки и восстановления агента Jump."; break;
     }
-    if (self.preview) body = [@"Предпросмотр интерфейса. Запуск Jump не изменяется.\n\n" stringByAppendingString:body ?: @""];
+    if (self.usesApplicationBackend) {
+        QBApplicationBackend *backend=(QBApplicationBackend *)self.filter;
+        switch (self.filter.state) {
+            case QBFilterStateOff:
+                title=@"Готово к запуску";
+                body=backend.selectedApplicationURL ? [NSString stringWithFormat:@"Выбрано: %@. Закройте приложение и нажмите «Запустить через QuietBar».",backend.selectedApplicationName] : @"Выберите приложение, которое захватывает или передаёт экран."; break;
+            case QBFilterStateStarting: title=@"Запускаем приложение…"; body=self.filter.errorMessage.length ? self.filter.errorMessage : @"Проверяем приложение и разрешения macOS."; break;
+            case QBFilterStatePrepared: title=@"Приложение запущено"; body=@"Включите захват или подключитесь к этому Mac. Проверьте передачу экрана, управление и отсутствие фиолетового индикатора. Сам запуск этого не подтверждает."; break;
+            case QBFilterStateStopping: title=@"Завершаем запуск…"; body=self.filter.errorMessage.length ? self.filter.errorMessage : @"Ждём обычного завершения приложения. Сохраните открытые документы."; break;
+            case QBFilterStateNeedsSetup: title=@"Нужно ваше действие"; body=self.filter.errorMessage; break;
+            case QBFilterStateUnsupported: title=@"Запуск недоступен"; body=self.filter.errorMessage; break;
+            case QBFilterStateError: title=@"Не удалось запустить приложение"; body=self.filter.errorMessage; break;
+            default: break;
+        }
+    }
+    if (self.preview) body = [@"Предпросмотр интерфейса.\n\n" stringByAppendingString:body ?: @""];
     self.statusTitle.stringValue = title;
     self.statusDescription.stringValue = body;
     NSString *button = self.usesJumpBackend ? (self.filter.enabled ? @"Вернуть обычный запуск" : @"Подготовить Jump")
                                          : (self.filter.enabled ? @"Показать значки" : @"Скрыть значки");
-    if (self.usesJumpBackend && !self.filter.enabled && [[(QBJumpBackend *)self.filter diagnostics][@"cleanupPending"] boolValue])
-        button=@"Восстановить запуск Jump";
+    if (self.usesApplicationBackend) button=self.filter.enabled ? @"Завершить запуск"
+        : [(QBApplicationBackend *)self.filter selectedApplicationURL] ? @"Запустить через QuietBar" : @"Выбрать приложение…";
+    if (!self.filter.enabled && [[self launcherDiagnostics][@"cleanupPending"] boolValue])
+        button=self.usesApplicationBackend ? @"Проверить завершение" : @"Восстановить запуск Jump";
     self.toggleButton.title = button; self.toggleMenuItem.title = button;
     BOOL busy = self.filter.state==QBFilterStateStopping;
     self.toggleButton.enabled = self.filter.available && !self.preview && !busy;
     self.toggleMenuItem.enabled = self.toggleButton.enabled;
-    self.setupButton.hidden = !self.usesJumpBackend || self.filter.state!=QBFilterStateNeedsSetup;
+    self.setupButton.hidden = (!self.usesJumpBackend && !self.usesApplicationBackend) || self.filter.state!=QBFilterStateNeedsSetup;
+    self.setupButton.enabled = !self.preview;
+    self.setupButton.title = self.usesApplicationBackend ? @"Продолжить настройку…" : @"Настроить разрешения…";
+    self.jumpButton.enabled = !self.preview && !self.filter.enabled && ![[self launcherDiagnostics][@"cleanupPending"] boolValue];
+    if (self.usesApplicationBackend) {
+        self.jumpButton.hidden=![(QBApplicationBackend *)self.filter selectedApplicationURL];
+        self.jumpButton.title=@"Выбрать другое приложение…";
+    }
     self.loginButton.enabled = !self.preview;
     if (!self.preview && !self.restoringDefaults && self.usesJumpBackend) {
         if (self.filter.state==QBFilterStatePrepared) [NSUserDefaults.standardUserDefaults setBool:YES forKey:QBJumpEnabledKey];
@@ -269,18 +337,34 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
     }
     self.statusItem.button.toolTip = [@"QuietBar — " stringByAppendingString:title.lowercaseString];
 }
+- (NSDictionary *)launcherDiagnostics {
+    if (self.usesJumpBackend) return [(QBJumpBackend *)self.filter diagnostics];
+    if (self.usesApplicationBackend) return [(QBApplicationBackend *)self.filter diagnostics];
+    return @{};
+}
 - (void)toggle:(id)sender {
     if (self.preview) return;
-    if (self.usesJumpBackend && !self.filter.enabled && [[(QBJumpBackend *)self.filter diagnostics][@"cleanupPending"] boolValue]) {
+    if (!self.filter.enabled && [[self launcherDiagnostics][@"cleanupPending"] boolValue]) {
         [self.filter stop]; return;
     }
+    if (self.usesApplicationBackend && ![(QBApplicationBackend *)self.filter selectedApplicationURL]) {
+        [(QBApplicationBackend *)self.filter chooseApplicationForWindow:self.window]; return;
+    }
     [self.filter setEnabled:!self.filter.enabled];
-    if (!self.usesJumpBackend) [NSUserDefaults.standardUserDefaults setBool:self.filter.enabled forKey:QBEnabledKey];
+    if (!self.usesJumpBackend && !self.usesApplicationBackend) [NSUserDefaults.standardUserDefaults setBool:self.filter.enabled forKey:QBEnabledKey];
 }
 - (void)openSetup:(id)sender {
+    if (self.preview) return;
     if (self.usesJumpBackend) [(QBJumpBackend *)self.filter openSetup];
+    else if (self.usesApplicationBackend) {
+        if (![(QBApplicationBackend *)self.filter selectedApplicationURL])
+            [(QBApplicationBackend *)self.filter chooseApplicationForWindow:self.window];
+        else [(QBApplicationBackend *)self.filter openSetup];
+    }
 }
 - (void)openJump:(id)sender {
+    if (self.preview) return;
+    if (self.usesApplicationBackend) { [(QBApplicationBackend *)self.filter chooseApplicationForWindow:self.window]; return; }
     NSURL *url = [NSURL fileURLWithPath:@"/Applications/Jump Desktop Connect.app"];
     if ([NSFileManager.defaultManager fileExistsAtPath:url.path])
         [NSWorkspace.sharedWorkspace openApplicationAtURL:url configuration:NSWorkspaceOpenConfiguration.configuration completionHandler:nil];
@@ -294,9 +378,9 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
 #endif
     NSMutableDictionary *value=[@{@"version":NSBundle.mainBundle.infoDictionary[@"CFBundleShortVersionString"] ?: @"",
         @"macOS":NSProcessInfo.processInfo.operatingSystemVersionString,@"processArchitecture":architecture,
-        @"backend":self.usesJumpBackend ? @"experimentalJumpLauncher" : @"nativeAssessment",
+        @"backend":self.usesJumpBackend ? @"experimentalJumpLauncher" : self.usesApplicationBackend ? @"experimentalApplicationLauncher" : @"nativeAssessment",
         @"state":@(self.filter.state),@"enabled":@(self.filter.enabled),@"message":self.filter.errorMessage ?: @""} mutableCopy];
-    if (self.usesJumpBackend) value[@"launcher"]=[(QBJumpBackend *)self.filter diagnostics];
+    if (self.usesJumpBackend || self.usesApplicationBackend) value[@"launcher"]=[self launcherDiagnostics];
     NSData *data=[NSJSONSerialization dataWithJSONObject:value options:NSJSONWritingPrettyPrinted error:nil];
     if (data) {
         NSPasteboard *pasteboard=NSPasteboard.generalPasteboard;
@@ -391,8 +475,8 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
 }
 - (void)quit:(id)sender { [NSApp terminate:nil]; }
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
-    if (!self.usesJumpBackend || self.preview) return NSTerminateNow;
-    NSDictionary *diagnostics = [(QBJumpBackend *)self.filter diagnostics];
+    if ((!self.usesJumpBackend && !self.usesApplicationBackend) || self.preview) return NSTerminateNow;
+    NSDictionary *diagnostics = [self launcherDiagnostics];
     if (!self.filter.enabled && ![diagnostics[@"cleanupPending"] boolValue]) return NSTerminateNow;
     if (self.terminationPending) return NSTerminateLater;
     self.terminationPending = YES;
@@ -402,14 +486,14 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
     [NSTimer scheduledTimerWithTimeInterval:0.25 repeats:YES block:^(NSTimer *timer) {
         QBApp *app = weakSelf;
         if (!app) { [timer invalidate]; return; }
-        NSDictionary *info = [(QBJumpBackend *)app.filter diagnostics];
+        NSDictionary *info = [app launcherDiagnostics];
         if (![info[@"cleanupPending"] boolValue] && !app.filter.enabled) {
             [timer invalidate]; app.terminationPending = NO; [NSApp replyToApplicationShouldTerminate:YES];
         } else if (deadline.timeIntervalSinceNow<=0) {
             [timer invalidate]; app.terminationPending = NO; [NSApp replyToApplicationShouldTerminate:NO];
             [app showSettings:nil];
             NSAlert *alert = [[NSAlert alloc] init];
-            alert.messageText=@"Восстановление Jump ещё не подтверждено";
+            alert.messageText=app.usesApplicationBackend ? @"Завершение приложения ещё не подтверждено" : @"Восстановление Jump ещё не подтверждено";
             alert.informativeText=@"QuietBar остаётся открытым. Проверьте состояние в окне приложения и повторите выключение.";
             [alert addButtonWithTitle:@"Понятно"]; [alert beginSheetModalForWindow:app.window completionHandler:nil];
         }
@@ -422,12 +506,80 @@ static NSStackView *VStack(NSArray<NSView *> *views, CGFloat spacing) {
 }
 @end
 
+// Exercises the production launcher only on explicitly provisioned hosted CI.
+// Capture permissions and visual assertions belong to the external fixture harness.
+static BOOL WriteApplicationTestJSON(NSDictionary *value, NSString *directory, NSString *name) {
+    NSData *data=[NSJSONSerialization dataWithJSONObject:value options:NSJSONWritingPrettyPrinted error:nil];
+    return data && [data writeToFile:[directory stringByAppendingPathComponent:name] options:NSDataWritingAtomic error:nil];
+}
+static void RunApplicationTestSlice(void) {
+    [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+}
+static int RunApplicationIntegrationTest(NSArray<NSString *> *arguments) {
+    NSDictionary *environment=NSProcessInfo.processInfo.environment;
+    if (arguments.count!=4 || ![environment[@"GITHUB_ACTIONS"] isEqualToString:@"true"]
+        || ![environment[@"RUNNER_OS"] isEqualToString:@"macOS"]
+        || ![environment[@"RUNNER_ENVIRONMENT"] isEqualToString:@"github-hosted"]
+        || ![environment[@"QB_APPLICATION_INTEGRATION"] isEqualToString:@"1"] || getuid()==0) return 77;
+    NSString *temporary=[environment[@"RUNNER_TEMP"] stringByResolvingSymlinksInPath];
+    NSString *output=[arguments[3] stringByResolvingSymlinksInPath];
+    if (![temporary isAbsolutePath] || ![output hasPrefix:[temporary stringByAppendingString:@"/"]]
+        || ![NSFileManager.defaultManager fileExistsAtPath:output]) return 77;
+    NSURL *application=[NSURL fileURLWithPath:arguments[2]];
+    NSString *bundleID=[NSBundle bundleWithURL:application].bundleIdentifier;
+    if (![@[@"local.quietbar.fixture.direct",@"local.quietbar.fixture.delayed"] containsObject:bundleID ?: @""]) return 77;
+    QBApplicationBackend *backend=[[QBApplicationBackend alloc] initWithRecovery:YES];
+    NSDate *recoveryDeadline=[NSDate dateWithTimeIntervalSinceNow:10];
+    while ([backend.diagnostics[@"recovering"] boolValue] && recoveryDeadline.timeIntervalSinceNow>0) RunApplicationTestSlice();
+    NSError *error=nil;
+    if (![backend selectApplicationURL:application error:&error]) {
+        WriteApplicationTestJSON(@{@"passed":@NO,@"reason":error.localizedDescription ?: @"Invalid fixture"},output,@"final.json");
+        return 1;
+    }
+    [backend setEnabled:YES];
+    NSDate *deadline=[NSDate dateWithTimeIntervalSinceNow:30];
+    while (backend.state==QBFilterStateStarting && deadline.timeIntervalSinceNow>0) {
+        WriteApplicationTestJSON(backend.diagnostics,output,@"diagnostics.json");
+        RunApplicationTestSlice();
+    }
+    BOOL prepared=backend.state==QBFilterStatePrepared;
+    WriteApplicationTestJSON(backend.diagnostics,output,@"prepared.json");
+    if (prepared) {
+        deadline=[NSDate dateWithTimeIntervalSinceNow:180];
+        while (![NSFileManager.defaultManager fileExistsAtPath:[output stringByAppendingPathComponent:@"driver-stop"]]
+            && backend.state==QBFilterStatePrepared && deadline.timeIntervalSinceNow>0) {
+            WriteApplicationTestJSON(backend.diagnostics,output,@"diagnostics.json");
+            RunApplicationTestSlice();
+        }
+    }
+    [backend stop];
+    deadline=[NSDate dateWithTimeIntervalSinceNow:35];
+    while ([backend.diagnostics[@"cleanupPending"] boolValue] && deadline.timeIntervalSinceNow>0) RunApplicationTestSlice();
+    NSMutableDictionary *final=[backend.diagnostics mutableCopy];
+    BOOL restored=![final[@"cleanupPending"] boolValue] && !backend.enabled;
+    final[@"preparedObserved"]=prepared ? @YES : @NO;
+    final[@"passed"]=prepared && restored ? @YES : @NO;
+    WriteApplicationTestJSON(final,output,@"final.json");
+    return prepared && restored ? 0 : 1;
+}
+
 int main(void) {
     @autoreleasepool {
         NSArray *arguments = NSProcessInfo.processInfo.arguments;
         if (arguments.count>1 && [arguments[1] isEqualToString:@"--jump-controller"]) {
             if (arguments.count!=5 || [arguments[3] intValue]<=1) return 64;
             return QBRunJumpController(arguments[2],(pid_t)[arguments[3] intValue],arguments[4]);
+        }
+        if (arguments.count>1 && [arguments[1] isEqualToString:@"--application-controller"]) {
+            if (arguments.count!=5 || [arguments[3] intValue]<=1) return 64;
+            return QBRunApplicationController(arguments[2],(pid_t)[arguments[3] intValue],arguments[4]);
+        }
+        if ([arguments containsObject:@"--test-application-helpers"]) {
+            NSDictionary *controller=QBApplicationControllerSelfTest();
+            NSDictionary *backend=[QBApplicationBackend selfTest];
+            BOOL passed=[controller[@"passed"] boolValue] && [backend[@"passed"] boolValue];
+            PrintJSON(@{@"passed":@(passed),@"controller":controller,@"backend":backend});
+            return passed ? 0 : 1;
         }
         if ([arguments containsObject:@"--test-legacy-helpers"]) {
             NSDictionary *controller=QBJumpControllerSelfTest();
@@ -438,6 +590,8 @@ int main(void) {
         }
         [NSApplication sharedApplication];
         [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
+        if (arguments.count>1 && [arguments[1] isEqualToString:@"--test-application-cycle"])
+            return RunApplicationIntegrationTest(arguments);
         if ([arguments containsObject:@"--self-test"]) {
             QBFilter *filter=[[QBFilter alloc] initWithClockTracking:NO];
             PrintJSON(@{@"bundleID":NSBundle.mainBundle.bundleIdentifier ?: @"", @"filterAvailable":@(filter.available),
@@ -445,7 +599,7 @@ int main(void) {
                 @"loginStatus":LoginStatusName(SMAppService.mainAppService.status),
                 @"state":@(filter.state), @"enabled":@(filter.enabled),
                 @"minimumMacOS":@"14.0",@"legacyJumpCandidate":@([NSFileManager.defaultManager fileExistsAtPath:@"/Applications/Jump Desktop Connect.app"]),
-                @"selectedBackend":filter.available ? @"nativeAssessment" : @"experimentalJumpLauncher"});
+                @"selectedBackend":filter.available ? @"nativeAssessment" : @"experimentalApplicationLauncher"});
             [filter stop]; return 0;
         }
         if ([arguments containsObject:@"--test-unsupported"]) {

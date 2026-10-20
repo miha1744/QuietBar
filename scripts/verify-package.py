@@ -23,6 +23,7 @@ REPORT = {
     "passed": False,
     "scope": "package integrity and read-only CLI checks",
     "guiJumpAcceptance": "not run",
+    "genericApplicationCaptureAcceptance": "not run",
     "checks": [],
     "commands": [],
     "cliTests": {},
@@ -168,7 +169,7 @@ def verify_dmg(path, temporary, app_files, metadata, hardened):
 
 
 def cli_checks(binary, metadata):
-    for flag in ("--test-legacy-helpers", "--test-unsupported", "--self-test"):
+    for flag in ("--test-legacy-helpers", "--test-application-helpers", "--test-unsupported", "--self-test"):
         stdout, _ = run(flag, [binary, flag], timeout=30)
         value = json.loads(stdout)
         require(isinstance(value, dict), f"{flag}: expected JSON object")
@@ -182,6 +183,11 @@ def cli_checks(binary, metadata):
             require(controller.get("serviceMutations") == 0 and controller.get("preferenceMutations") == 0
                     and json_flag(controller.get("indicatorVerified"), False) and json_flag(backend.get("launchPerformed"), False),
                     "Legacy helper tests must report no launch or state mutations")
+        elif flag == "--test-application-helpers":
+            require(json_flag(value.get("passed"), True)
+                    and json_flag(value.get("controller", {}).get("passed"), True)
+                    and json_flag(value.get("backend", {}).get("passed"), True),
+                    "Application helper fixtures failed")
         elif flag == "--test-unsupported":
             require(all(json_flag(value.get(key), True) for key in ("passed", "simulatedMissingAPI", "activationBlocked")),
                     "Simulated unsupported API did not remain disabled")
@@ -233,7 +239,10 @@ def main():
         app_files = app_manifest(app)
         verify_zip(app_zip, root, [f"{root}/QuietBar.app/Contents/Info.plist",
                                   f"{root}/QuietBar.app/Contents/MacOS/QuietBar", f"{root}/README.txt"])
-        verify_zip(source_zip, "QuietBar-source", ["QuietBar-source/build.sh", "QuietBar-source/Sources/main.m"])
+        verify_zip(source_zip, "QuietBar-source", ["QuietBar-source/build.sh", "QuietBar-source/Sources/main.m",
+            "QuietBar-source/Sources/QBApplicationBackend.h", "QuietBar-source/Sources/QBApplicationBackend.m",
+            "QuietBar-source/Sources/QBApplicationController.h", "QuietBar-source/Sources/QBApplicationController.m",
+            "QuietBar-source/ci/application_attribution.py", "QuietBar-source/.github/workflows/application-attribution.yml"])
         with tempfile.TemporaryDirectory(prefix="quietbar-verify-", dir=build) as directory:
             temporary = Path(directory)
             extracted = temporary / "zip"
@@ -256,7 +265,7 @@ def main():
         report.write_text(json.dumps(REPORT, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         print(f"Verification report: {report}")
     if REPORT["passed"]:
-        print("Package integrity and read-only CLI checks passed; GUI/Jump acceptance was not run.")
+        print("Package integrity and read-only CLI checks passed; actual application capture and indicator acceptance were not run.")
     return 0 if REPORT["passed"] else 1
 
 

@@ -1,8 +1,8 @@
 # How QuietBar works
 
-QuietBar is an Objective-C/AppKit menu bar app. It selects a backend by probing the running system for the native assessment API, rather than assuming support from the macOS version. The fallback is a fixed Jump Desktop Connect launch wrapper. Both implement the [`QBHidingBackend`](../Sources/QBFilter.h) interface.
+QuietBar is an Objective-C/AppKit menu bar app. It selects a backend by probing the running system for the native assessment API, rather than assuming support from the macOS version. The default fallback in 1.3 is a launcher for a selected closed application. The fixed Jump Desktop adapter remains opt-in. All implement the [`QBHidingBackend`](../Sources/QBFilter.h) interface.
 
-The product direction is app-independent menu bar visibility control. Platform backends provide the macOS mechanism; future visibility rules will choose which supported items to show; app-specific adapters handle integrations that need a particular launch path. The native backend already operates independently of a capture app. The current legacy code is the first concrete adapter, not a general launcher. See the [roadmap](roadmap.md) for planned rules and additional adapters.
+The product direction is app-independent menu bar visibility control. Platform backends provide the macOS mechanism; future visibility rules will choose which supported items to show; app-specific adapters handle integrations that need a particular launch path. The native backend already operates independently of a capture app. The generic launcher and fixed Jump adapter have separate lifecycle contracts. See the [roadmap](roadmap.md) for planned rules and additional adapters.
 
 ```mermaid
 flowchart TD
@@ -13,7 +13,12 @@ flowchart TD
     Assertion --> Group[macOS filters its special indicator group]
     Native -->|Off, quit, or pointer near clock| Release[Invalidate assertions]
 
-    Probe -->|No| Legacy[QBJumpBackend]
+    Probe -->|No| Apps[QBApplicationBackend]
+    Apps --> AppTerminal[Terminal → screen → early application controller]
+    AppTerminal --> AppValidate[Validate selected closed .app and permissions]
+    AppValidate --> AppLaunch[Journal suspended main executable then resume]
+    AppLaunch --> AppStop[Normal quit request and exact child exit acknowledgement]
+    Probe -.->|Explicit --legacy-jump| Legacy[QBJumpBackend]
     Legacy --> Terminal[Terminal opens a private launch.command]
     Terminal --> Screen[Detached /usr/bin/screen]
     Screen --> Controller[QuietBar --jump-controller before NSApplication]
@@ -35,13 +40,23 @@ The diagram describes implemented control flow. It does not assert that a connec
 
 [`QBFilter.m`](../Sources/QBFilter.m) dynamically loads the private `MenuBarClientCore` framework and checks for `MBAssessmentModeConfiguration`, `MBAssessmentModeAssertion` and the required selectors. It creates an assessment configuration with system-item IDs `0…255` and all currently running app bundle identifiers, including QuietBar, Jump and the standard menu bar services.
 
-This is a request to macOS’s own menu bar machinery. QuietBar does not draw a cover over the menu bar, move arbitrary windows or inject code into another process. In the observed compatible system, the special indicator group disappears even with the broad allowlist. AirDrop, Focus and Now Playing may disappear with it. The current app exposes no per-app or per-icon selection.
+This is a request to macOS’s own menu bar machinery. QuietBar does not draw a cover over the menu bar, move arbitrary windows or inject code into another process. In the observed compatible system, the special indicator group disappears even with the broad allowlist. AirDrop, Focus and Now Playing may disappear with it. The native filter exposes no per-icon selection; application selection belongs to the separate launcher.
 
 The backend refreshes the bundle allowlist after app launches, terminations, wake and session activation. New assertions replace old ones only after activation succeeds. A generation counter rejects stale completion callbacks; an error or timeout invalidates the held assertions.
 
 While enabled, a timer checks whether the pointer is in the clock region of any screen. It releases assertions while the pointer is there, then reapplies them after the pointer leaves. Turning the mode off or quitting also releases them. This native path does not request Screen Recording or Accessibility permission.
 
 The private configuration has bundle and system-item allowlists, which makes finer rules a plausible future investigation on compatible systems. Stable item semantics and a selection UI have not been implemented or established across macOS versions.
+
+## Experimental application launcher (1.3)
+
+`QBApplicationBackend` provides selection, Terminal launch, polling and recovery coordination. `QBApplicationController` is dispatched before `NSApplication` is created. The target is the selected app's canonical main executable, without shell arguments or a LaunchServices relaunch. It is validated for bundle containment, ownership, write permissions, code identity and quarantine assessment. Already running apps are rejected rather than taken over.
+
+A private session under `~/Library/Application Support/QuietBar/Applications/` binds owner, controller and child by UID, PID, start time and executable path. The selected executable is rechecked before launch. The child starts suspended, and its identity is journaled before the first resume. A narrow rollback may kill our still-unreaped child only before it has ever executed app code. A resumed app receives only a normal termination request; unsaved documents or a refusal require the user to close it manually. Abandoned-session recovery does not force-quit an app. Invalid journals fail closed.
+
+`prepared` means only that the main executable remains alive after startup. Diagnostics retain `captureVerified: false` and `indicatorVerified: false`. The launch chain cannot redirect independent LaunchAgents, root/XPC helpers or existing instances, and applications can impose launch constraints. No universal app compatibility claim follows from a successful launch.
+
+The GUI never automatically launches a selected app at login. Turning the mode off or quitting waits for owned-process exit acknowledgement; unresolved cleanup stays visible. Historical sessions can require manual app closure. An uncatchable kill in the suspended-spawn/journal interval can leave an unstarted orphan, as with the older adapter.
 
 ## Experimental Jump backend
 
@@ -91,6 +106,8 @@ Indicator visibility and capture availability are separate facts. The native pat
 | --- | --- |
 | [`main.m`](../Sources/main.m) | AppKit UI, backend selection, login item, command-line diagnostics and lifecycle |
 | [`QBFilter.m`](../Sources/QBFilter.m) | Native private API, assertion lifecycle, allowlist refresh and clock hover |
+| [`QBApplicationBackend.m`](../Sources/QBApplicationBackend.m) | Generic app selection, Terminal launch, polling and recovery coordination |
+| [`QBApplicationController.m`](../Sources/QBApplicationController.m) | Closed-app validation, suspended launch, identity journal and graceful stop |
 | [`QBJumpBackend.m`](../Sources/QBJumpBackend.m) | Legacy GUI state, Terminal launch, polling and recovery coordination |
 | [`QBJumpController.m`](../Sources/QBJumpController.m) | Permissions, fixed-target validation, user-agent takeover and journal restoration |
 | [`build.sh`](../build.sh) | Universal compilation, local signing and packaging; optional credentialed distribution mode |

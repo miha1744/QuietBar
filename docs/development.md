@@ -15,11 +15,12 @@ The default build uses an ad-hoc signature. `--hardened-runtime` adds runtime pr
 
 `scripts/verify-package.py` validates bundle metadata, both executable architectures and their deployment targets, signatures, ZIP CRCs, DMG checksums, and equality of the app's files inside the packages. It extracts the app ZIP into its own temporary directory, mounts only the supplied DMG read-only without opening Finder, and detaches that mount in `finally` cleanup. External commands have timeouts. Artifacts are read-only inputs; the JSON report and temporary files go into the verifier's build directory.
 
-It invokes exactly these CLI modes on the output app:
+It invokes these read-only CLI modes on the output app:
 
 | Command | Evidence |
 | --- | --- |
 | `--test-legacy-helpers` | Controller recovery/path/identity fixtures (currently 20) and backend validation fixtures. Reports zero service/preference mutations and no agent launch. |
+| `--test-application-helpers` | Generic controller and backend validation fixtures; no selected application launch or permission request. |
 | `--test-unsupported` | Simulates a missing private API and checks that activation is blocked. |
 | `--self-test` | Reads API availability, selected backend, and login-item status while leaving filtering disabled. API availability is an observation, not a pass requirement. |
 
@@ -40,10 +41,14 @@ The labels are listed in the [official runner image inventory](https://github.co
 
 Hosted-runner checks do not establish normal desktop compatibility. Prior capture experiments ran on hosts with SIP disabled. The verifier records the current host's `csrutil status`; neither a passing CI job nor those experiments prove behavior on a normal Mac with SIP enabled. The CI matrix also has no macOS 27 lane, so it does not exercise the native macOS 27 backend.
 
-Before claiming compatibility, manually verify the installed app on the exact macOS build and architecture, with SIP enabled. For the experimental Jump launcher, record the Jump version and confirm all of the following during a real remote connection: indicator state, continuously updating captured image, mouse control, and keyboard input. Also verify that restoring normal launch works and a later connection still works. **Prepared means the launcher is prepared; it does not mean the indicator is hidden or remote control has passed.** Record untested combinations as untested.
+Before claiming compatibility, manually verify the installed app on the exact macOS build and architecture, with SIP enabled. For the experimental application launcher, record the selected app version and confirm all of the following during a real remote connection: indicator state, continuously updating captured image, mouse control, and keyboard input. Also verify that restoring normal launch works and a later connection still works. **Prepared means the launcher is prepared; it does not mean the indicator is hidden or remote control has passed.** Record untested combinations as untested.
 
 ## Optional distribution build
 
 `./build.sh --distribution` is a separate, explicitly requested operation. It requires an existing Developer ID Application signing identity in the local keychain and an existing `notarytool` keychain profile, selected through `SIGN_IDENTITY` and `NOTARY_PROFILE`. It signs with hardened runtime, submits the app and DMG to Apple, staples accepted tickets, and requires Gatekeeper acceptance. It publishes the complete local set into a new versioned `dist/QuietBar-<version>-distribution/` directory only after those checks pass; an existing directory is not overwritten.
 
 This mode sends the packages to Apple. Use it only with authorization for that submission. Do not put certificate private keys, account passwords, API keys, or keychain contents in the repository, workflow, diagnostics, or issue reports. The CI workflow does not configure or invoke distribution mode. Signing/notarization checks and manual GUI/Jump acceptance are separate release requirements; there is no automatic release publication workflow.
+
+## Production launcher integration harness
+
+The separate `application-attribution.yml` workflow runs only on explicitly provisioned standard hosted macOS VMs. Its fixture apps and CI-only permission provisioning live in `ci/`, outside product sources. `--test-application-cycle` is guarded by hosted CI environment checks, fixed fixture bundle IDs and an output path within `RUNNER_TEMP`. It drives the production backend; the external harness separately measures capture and native indicator pixels. This workflow is distinct from read-only package verification. SIP-disabled VM evidence does not establish ordinary SIP-enabled desktop compatibility.

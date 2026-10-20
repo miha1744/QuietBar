@@ -2,6 +2,12 @@
 
 This page separates the app’s build target, observed native behavior and experiments with a separate capture probe. Status recorded on 20 October 2026. A successful build, live process or missing icon alone is not acceptance of remote control.
 
+## Version 1.3 application launcher
+
+Version 1.3 adds `.app` selection and direct launch through the production Terminal → screen → controller path. It no longer requires Jump as the default fallback. Generic launch support is experimental: independent services, XPC/root helpers, existing instances and launch constraints are not covered by direct-main-executable attribution. Arbitrary third-party apps on SIP-enabled macOS 14/15/26 remain unverified. A prepared process is never recorded as verified capture or hidden indicator.
+
+The product integration harness and its exact results will be recorded separately from the historical probe evidence below. Package checks do not supply that evidence.
+
 ## Product status
 
 | Environment | Evidence available | What remains unverified |
@@ -63,8 +69,8 @@ Repeat with SIP enabled, normal macOS permission approval and the exact release/
 - Local builds are ad hoc signed and unnotarized. No Developer ID identity is supplied. Hardened runtime alone does not change that; Gatekeeper can still block opening. [Apple documents the available GUI approval flow](https://support.apple.com/en-us/102445).
 - Native mode uses a private API. System updates can remove it or change its behavior; it is not a Mac App Store approach.
 - The native mode acts on a system group. AirDrop, Focus and Now Playing can disappear with the purple indicator. Arbitrary app windows and individual menu bar icons are outside the current controls.
-- The legacy mode requires the supported Jump installation in `/Applications`, Terminal Screen Recording and Accessibility permissions, and manually enabled Jump autostart. Preparation/restoration can interrupt a connection.
+- The default application launcher requires a closed selected `.app` and Terminal Screen Recording permission. It does not manage independent services or grant the selected app its permissions. The older fixed Jump adapter remains available only through `--legacy-jump`; its separate requirements still apply.
 - The interface is currently in Russian. Documentation is available in [English](../README.md) and [Russian](README.ru.md).
 - Recovery uses a verified journal, with a known suspended-orphan window after `SIGKILL`. See [architecture](architecture.md#known-recovery-limit).
 
-For a useful issue report, include the exact macOS build, architecture, Jump Connect version, selected backend and which of the five checks passed. The menu’s **«Скопировать диагностику»** action copies local diagnostics; inspect and remove personal paths or process details before sharing them publicly.
+For a useful issue report, include the exact macOS build, architecture, selected app version, selected backend and which of the five checks passed. The menu’s **«Скопировать диагностику»** action copies local diagnostics; inspect and remove personal paths or process details before sharing them publicly.

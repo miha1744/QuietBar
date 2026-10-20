@@ -12,10 +12,7 @@ toggles a special system indicator group; it does not offer individual icon
 selection. Prior hiding was observed on macOS 27.0.1, with the evidence and limits
 recorded in [compatibility](compatibility.md).
 
-The experimental legacy backend is a separate, fixed Jump Desktop Connect
-adapter. It validates one signed installation and its user LaunchAgent, then
-manages a recorded launch and restoration. It is not a generic application
-launcher. Actual Jump capture, input and reconnect acceptance remains unverified.
+Version 1.3 adds a generic closed-application launcher through Terminal and a native controller. It is experimental and cannot redirect independent services or existing instances. Actual third-party capture, input and indicator acceptance on SIP-enabled systems remains unverified. The older fixed Jump adapter is retained as a separate explicit mode.
 
 ## Planned layers
 
@@ -23,6 +20,7 @@ launcher. Actual Jump capture, input and reconnect acceptance remains unverified
 | --- | --- | --- |
 | Native platform backend | Detect supported APIs, manage visibility assertions and restore normal visibility. | Current group-level control; platform-dependent. |
 | Visibility rules and inventory | Identify controllable application/system items and expose explicit user choices. | Planned; individual controls need API feasibility checks. |
+| Generic application launcher | Select one closed `.app`; track its owned main process and request graceful termination. | Implemented experimentally in 1.3; app/version acceptance remains separate. |
 | Application-specific adapters | Handle a particular app only when a platform path is insufficient and its lifecycle can be verified. | Jump is experimental; other adapters are not implemented. |
 
 Rules should clearly show which items can be controlled on the current Mac and

@@ -4,8 +4,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 APP_NAME="QuietBar"
-VERSION="1.2.0"
-BUILD_VERSION="3"
+VERSION="1.3.0"
+BUILD_VERSION="4"
 BUNDLE_ID="local.quietbar.app"
 MIN_MACOS="14.0"
 BUILD_DIR="${BUILD_DIR:-$SCRIPT_DIR/build}"
@@ -21,12 +21,12 @@ Usage: ./build.sh [--build-dir PATH] [--output-dir PATH] [--hardened-runtime] [-
 
 Builds a universal arm64 + x86_64 macOS app and creates:
   QuietBar.app
-  QuietBar-1.2.0-universal.zip
-  QuietBar-1.2.0-universal.dmg
+  QuietBar-1.3.0-universal.zip
+  QuietBar-1.3.0-universal.dmg
   QuietBar-source.zip
   QuietBar-инструкция.txt (when README.txt is present)
 
-The app ZIP contains a QuietBar-1.2.0 folder with the app and README.txt.
+The app ZIP contains a QuietBar-1.3.0 folder with the app and README.txt.
 The read-only DMG contains the app, an Applications shortcut, and README.txt.
 
 BUILD_DIR and OUTPUT_DIR may also be supplied as environment variables.
@@ -42,7 +42,7 @@ its SHA-1) and NOTARY_PROFILE (an existing notarytool keychain profile). It sign
 with hardened runtime, submits the app and DMG to Apple, staples both tickets,
 and requires Gatekeeper acceptance. Without those credentials it stops before
 building. This mode does not create certificates or purchase a developer account.
-The accepted set is published in OUTPUT_DIR/QuietBar-1.2.0-distribution/ only
+The accepted set is published in OUTPUT_DIR/QuietBar-1.3.0-distribution/ only
 after all checks pass. An existing distribution directory is never overwritten.
 USAGE
 }
@@ -326,11 +326,13 @@ rm -rf "$SOURCE_STAGE"
 mkdir -p "$SOURCE_STAGE"
 /usr/bin/ditto "$SCRIPT_DIR/Sources" "$SOURCE_STAGE/Sources"
 /usr/bin/ditto "$SCRIPT_DIR/build.sh" "$SOURCE_STAGE/build.sh"
-for SOURCE_DIRECTORY in docs scripts .github; do
+for SOURCE_DIRECTORY in docs scripts ci .github; do
   if [[ -d "$SCRIPT_DIR/$SOURCE_DIRECTORY" ]]; then
     /usr/bin/ditto "$SCRIPT_DIR/$SOURCE_DIRECTORY" "$SOURCE_STAGE/$SOURCE_DIRECTORY"
   fi
 done
+# Bytecode caches are local tooling byproducts, not distributable sources.
+/usr/bin/find "$SOURCE_STAGE" -type d -name __pycache__ -prune -exec /bin/rm -rf '{}' +
 for SOURCE_FILE in "$SCRIPT_DIR"/README* "$SCRIPT_DIR"/LICENSE* "$SCRIPT_DIR"/NOTICE* \
     "$SCRIPT_DIR"/THIRD-PARTY-NOTICES.txt "$SCRIPT_DIR"/CHANGELOG.md \
     "$SCRIPT_DIR"/CONTRIBUTING.md "$SCRIPT_DIR"/SECURITY.md "$SCRIPT_DIR"/.gitignore; do

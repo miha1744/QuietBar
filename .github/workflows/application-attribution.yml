@@ -1,0 +1,41 @@
+name: Selected application attribution experiment
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  application-attribution:
+    name: Selected app A-B-A / ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Standard public hosted labels only; no paid large/xlarge runners.
+        os: [macos-14, macos-15, macos-15-intel, macos-26]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    env:
+      QB_APPLICATION_INTEGRATION: '1'
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build actual product without launching it
+        run: ./build.sh --hardened-runtime --build-dir "$RUNNER_TEMP/quietbar-product-build" --output-dir "$RUNNER_TEMP/quietbar-product-dist"
+      - name: Build guarded direct and delayed capture applications
+        run: python3 ci/build-application-fixtures.py
+      - name: Check conservative evidence classifier
+        run: python3 ci/application_attribution.py --self-test
+      - name: Observe actual selected application backend A-B-A
+        run: python3 ci/application_attribution.py --product "$RUNNER_TEMP/quietbar-product-dist/QuietBar.app/Contents/MacOS/QuietBar"
+      - name: Retain evidence for native screenshot review
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: quietbar-selected-app-${{ matrix.os }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/quietbar-application-ci/evidence
+          if-no-files-found: error
+          retention-days: 1

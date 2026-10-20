@@ -1,6 +1,16 @@
 # Changes
 
-## Unreleased
+## 1.3.0 Preview 1 — 2026-10-20
+
+- Add a generic `.app` chooser as the default fallback when the native filter API is absent.
+- Launch a closed application's main executable through Terminal, screen and the early native controller; preserve the separate opt-in Jump adapter.
+- Validate target identity, keep a durable ownership journal and request graceful app termination; never force-quit an already running app.
+- Keep launch readiness separate from verified capture and indicator hiding. Arbitrary app compatibility remains experimental.
+- Add pure controller/backend checks and a separate hosted integration harness.
+
+App metadata is 1.3.0 (4), minimum macOS 14.0, arm64 and x86_64. Preview builds are ad hoc signed and unnotarized.
+
+## Earlier unreleased documentation
 
 - Define the broader app-independent menu bar visibility direction in both READMEs.
 - Separate platform backends, planned item rules and application-specific adapters.
