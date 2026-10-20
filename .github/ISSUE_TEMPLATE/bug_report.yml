@@ -1,0 +1,73 @@
+name: Bug report
+description: Report a reproducible QuietBar problem without uploading private data.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please describe what you observed. “Prepared” does not confirm that the indicator is hidden or that Jump remote control works.
+        Logs, screenshots, and diagnostics are optional. Review and redact usernames, paths, device names, IP addresses, session identifiers, and unrelated screen content before sharing. Do not include passwords or private keys.
+  - type: input
+    id: quietbar-version
+    attributes:
+      label: QuietBar version and build
+      placeholder: "For example: 1.2.0 (3); built locally or download source"
+    validations:
+      required: true
+  - type: input
+    id: macos-version
+    attributes:
+      label: Exact macOS version and build
+      placeholder: "From About This Mac; include the build number"
+    validations:
+      required: true
+  - type: dropdown
+    id: architecture
+    attributes:
+      label: Mac architecture
+      options:
+        - Apple Silicon (arm64)
+        - Intel (x86_64)
+        - Unknown
+    validations:
+      required: true
+  - type: dropdown
+    id: backend
+    attributes:
+      label: Selected backend or operation
+      options:
+        - Native indicator hiding (macOS 27)
+        - Experimental Jump launcher (macOS 14 / 15 / 26)
+        - Installation or app startup
+        - Unknown
+    validations:
+      required: true
+  - type: input
+    id: jump-version
+    attributes:
+      label: Jump Desktop Connect version, if relevant
+      placeholder: "Include whether Start Jump Desktop when my computer starts is enabled"
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps, expected result, and observed result
+      description: Include the exact QuietBar status or error. State whether SIP is enabled, disabled, or unknown; do not change SIP to report a bug.
+    validations:
+      required: true
+  - type: textarea
+    id: remote-results
+    attributes:
+      label: Indicator, captured image, mouse, and keyboard results
+      description: For a real Jump connection, describe each result separately. Use “not tested” when unknown. A hidden indicator alone is insufficient evidence.
+      placeholder: |
+        Indicator: visible / hidden / not tested
+        Captured image keeps updating: yes / no / not tested
+        Mouse control: works / fails / not tested
+        Keyboard input: works / fails / not tested
+        Restore normal launch and reconnect: works / fails / not tested
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Optional redacted diagnostics
+      description: Paste only relevant, reviewed text. No diagnostics or private data upload is required.
+      render: text

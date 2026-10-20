@@ -1,0 +1,16 @@
+.DS_Store
+/build/
+/dist/
+/outputs/
+*.app/
+*.dmg
+*.zip
+*.log
+*.p12
+*.p8
+*.keychain*
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc

@@ -1,0 +1,52 @@
+name: Build and verify packages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build / ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Standard hosted labels; do not substitute paid -large/-xlarge runners.
+        os: [macos-14, macos-15, macos-15-intel, macos-26]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build universal ad-hoc packages with hardened runtime
+        run: ./build.sh --hardened-runtime --build-dir build --output-dir dist
+      - name: Verify packages and run read-only CLI checks
+        run: python3 scripts/verify-package.py --output-dir dist --build-dir build/verification --require-hardened-runtime
+      - name: Retain verified candidates (not a release)
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: quietbar-build-${{ matrix.os }}
+          path: |
+            dist/*.zip
+            dist/*.dmg
+            build/verification/verification-report.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Retain a failed verification report
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: quietbar-verification-${{ matrix.os }}
+          path: build/verification/verification-report.json
+          if-no-files-found: ignore
+          retention-days: 7

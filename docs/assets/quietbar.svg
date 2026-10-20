@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">QuietBar — A quieter menu bar for macOS</title>
+  <desc id="desc">QuietBar project banner with a purple menu bar symbol. Experimental native macOS utility.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#13152b"/><stop offset="1" stop-color="#252344"/></linearGradient>
+    <linearGradient id="accent" x2="1" y2="1"><stop stop-color="#a69aff"/><stop offset="1" stop-color="#7565f3"/></linearGradient>
+  </defs>
+  <rect width="1200" height="360" rx="28" fill="url(#bg)"/>
+  <circle cx="1110" cy="18" r="230" fill="#8271f3" opacity=".075"/>
+  <circle cx="1080" cy="-10" r="162" fill="#b3a7ff" opacity=".055"/>
+  <g transform="translate(72 92)">
+    <rect width="126" height="126" rx="32" fill="url(#accent)"/>
+    <rect x="25" y="34" width="76" height="58" rx="10" fill="none" stroke="#fff" stroke-width="5"/>
+    <path d="M27 50h72" stroke="#fff" stroke-width="5"/>
+    <circle cx="36" cy="43" r="2" fill="#fff"/><circle cx="43" cy="43" r="2" fill="#fff"/>
+    <path d="m47 70 10 10 23-23" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="238" y="154" fill="#f8f7ff" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif" font-size="64" font-weight="700" letter-spacing="-2">QuietBar</text>
+  <text x="240" y="203" fill="#c0bdd7" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif" font-size="25">A quieter menu bar for macOS.</text>
+  <text x="240" y="258" fill="#a89df4" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif" font-size="14" font-weight="600" letter-spacing="2.8">NATIVE APP  ·  MACOS 14+  ·  EXPERIMENTAL</text>
+</svg>
